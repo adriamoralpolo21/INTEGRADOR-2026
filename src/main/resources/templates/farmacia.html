@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia - Glovo Perú</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            max-width: 260px;
+            margin: auto;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .btn-success {
+            background-color: #00A082;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-success:hover {
+            background-color: #007a63;
+        }
+
+        section {
+            margin-top: 130px;
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+        }
+
+        .navbar-brand img {
+            width: 80px;
+            height: 80px;
+        }
+
+        footer img {
+            width: 100px;
+        }
+
+        @media (min-width: 992px) {
+            .col-md-4 {
+                flex: 0 0 20%;
+                max-width: 20%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR (Thymeleaf fragment si lo tienes) -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- SECCIÓN FARMACIA -->
+    <section id="inicio" class="bg-light text-dark text-center p-5" style="margin-top: 0;">
+        <div class="container">
+            <h2 class="mb-4 text-success fw-bold text-center">Productos Farmacéuticos</h2>
+            <div class="row g-4 justify-content-center">
+
+                <!-- Producto 1 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://i-cf65.ch-static.com/content/dam/cf-consumer-healthcare/panadol-reskin/es_PE/Reskin/products/Packshot-Nuevo-Panadol-Antigripal.png?auto=format"
+                            class="card-img-top" alt="Panadol Antigripal">
+                        <div class="card-body text-center">
+                            <span class="badge"
+                                style="background-color:#FFD700; color:#006400; border:1px solid #006400;">Inkafarma</span>
+                            <h5 class="card-title mt-2">Panadol Antigripal 24 tabletas</h5>
+                            <p class="card-text">Alivio de síntomas de resfrío y gripe.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 24.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 19.90</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-001"
+                                data-nombre="Panadol Antigripal 24 tabletas" data-precio="19.90"
+                                data-servicio="farmacia"
+                                data-img="https://i-cf65.ch-static.com/content/dam/cf-consumer-healthcare/panadol-reskin/es_PE/Reskin/products/Packshot-Nuevo-Panadol-Antigripal.png?auto=format"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://www.farmaciassanchezantoniolli.com.ar/4269-thickbox_default/serum-hyalu-b5-de-la-roche-posay-con-acido-hialuronico.jpg"
+                            class="card-img-top" alt="Sérum Hyalu B5 La Roche-Posay">
+                        <div class="card-body text-center">
+                            <span class="badge"
+                                style="background-color:#FFD700; color:#006400; border:1px solid #006400;">Inkafarma</span>
+                            <h5 class="card-title mt-2">La Roche-Posay Hyalu B5 Sérum</h5>
+                            <p class="card-text">Ácido hialurónico + vitamina B5 para hidratación.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 169.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 149.90</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-002"
+                                data-nombre="La Roche-Posay Hyalu B5 Sérum" data-precio="149.90"
+                                data-servicio="farmacia"
+                                data-img="https://www.farmaciassanchezantoniolli.com.ar/4269-thickbox_default/serum-hyalu-b5-de-la-roche-posay-con-acido-hialuronico.jpg"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 3 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://realplaza.vtexassets.com/arquivos/ids/21829457/imageUrl_1.jpg?v=637834656146730000"
+                            class="card-img-top" alt="Sulfato Ferroso 300mg Tableta">
+                        <div class="card-body text-center">
+                            <span class="badge" style="background-color:#ff6600; color:#fff;">Mifarma</span>
+                            <h5 class="card-title mt-2">Sulfato Ferroso 300mg Tableta</h5>
+                            <p class="card-text">Suplemento de hierro para fortalecer el organismo.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 28.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 23.50</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-003"
+                                data-nombre="Sulfato Ferroso 300mg Tableta" data-precio="23.50" data-servicio="farmacia"
+                                data-img="https://realplaza.vtexassets.com/arquivos/ids/21829457/imageUrl_1.jpg?v=637834656146730000"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 4 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://www.isdin.com/sites/default/files/productos/imagenes/es_thumbnails_22_sept_fusion_fluid_0_a.jpg?v=1663672799"
+                            class="card-img-top" alt="Protector solar Isdin Fusion Water Ultraligero">
+                        <div class="card-body text-center">
+                            <span class="badge"
+                                style="background-color:#FFD700; color:#006400; border:1px solid #006400;">Inkafarma</span>
+                            <h5 class="card-title mt-2">Isdin Fusion Water Ultraligero SPF 50+</h5>
+                            <p class="card-text">Protección solar ultraligera para piel normal o seca.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 12.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 9.90</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-004"
+                                data-nombre="Isdin Fusion Water Ultraligero SPF 50+" data-precio="9.90"
+                                data-servicio="farmacia"
+                                data-img="https://www.isdin.com/sites/default/files/productos/imagenes/es_thumbnails_22_sept_fusion_fluid_0_a.jpg?v=1663672799"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Producto 5 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://a-static.mlcdn.com.br/1500x1500/hidratante-facial-neutrogena-hydro-boost-water-gel/epocacosmeticos-integra/21120/7b92bb6fe484d54882e9c1b7abf2efa6.jpg"
+                            class="card-img-top" alt="Gel Hidratante Facial Hydro Boost Neutrogena">
+                        <div class="card-body text-center">
+                            <span class="badge"
+                                style="background-color:#FFD700; color:#006400; border:1px solid #006400;">Inkafarma</span>
+                            <h5 class="card-title mt-2">Hydro Boost Neutrogena</h5>
+                            <p class="card-text">Hidratante facial con ácido hialurónico para piel fresca y suave.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 89.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 74.90</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-005"
+                                data-nombre="Hydro Boost Neutrogena" data-precio="74.90" data-servicio="farmacia"
+                                data-img="https://a-static.mlcdn.com.br/1500x1500/hidratante-facial-neutrogena-hydro-boost-water-gel/epocacosmeticos-integra/21120/7b92bb6fe484d54882e9c1b7abf2efa6.jpg"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 6 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://i5.walmartimages.cl/asr/ce321421-d93b-4a6f-8d34-f1084fef1a56.554ef6bf0aa97aaa329dd820d22ff419.jpeg?odnHeight=2000&odnWidth=2000&odnBg=ffffff"
+                            class="card-img-top" alt="Pack Rutina Elvive Pure">
+                        <div class="card-body text-center">
+                            <span class="badge" style="background-color:#dc3545; color:#fff;">Plaza Vea</span>
+                            <h5 class="card-title mt-2">Pack Elvive Pure</h5>
+                            <p class="card-text">Shampoo + acondicionador con ácido hialurónico. Nutrición total.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 42.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 34.90</span>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-006"
+                                data-nombre="Pack Elvive Pure" data-precio="34.90" data-servicio="farmacia"
+                                data-img="https://i5.walmartimages.cl/asr/ce321421-d93b-4a6f-8d34-f1084fef1a56.554ef6bf0aa97aaa329dd820d22ff419.jpeg?odnHeight=2000&odnWidth=2000&odnBg=ffffff"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 7 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://nutrikal.cl/wp-content/uploads/2023/03/Ensure-Advance-sabor-Vainilla-700x700.png"
+                            class="card-img-top" alt="Ensure Advance Sabor Vainilla">
+                        <div class="card-body text-center">
+                            <span class="badge" style="background-color:#ffc107; color:#000;">Makro</span>
+                            <h5 class="card-title mt-2">Ensure Advance Vainilla</h5>
+                            <p class="card-text">Suplemento nutricional con proteínas, calcio y vitaminas esenciales.
+                            </p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 89.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 79.90</span>
+                                <small class="text-muted">Lata 850g</small>
+                            </p>
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-007"
+                                data-nombre="Ensure Advance Vainilla 850g" data-precio="79.90" data-servicio="farmacia"
+                                data-img="https://nutrikal.cl/wp-content/uploads/2023/03/Ensure-Advance-sabor-Vainilla-700x700.png"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 8 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://walmartcr.vtexassets.com/arquivos/ids/582272-800-600?v=638478746459670000&width=800&height=600&aspect=true"
+                            class="card-img-top" alt="Shampoo H&S Limpieza Renovadora">
+                        <div class="card-body text-center">
+                            <span class="badge bg-danger text-light mb-2">Plaza Vea</span>
+                            <h5 class="card-title">Head & Shoulders Renovadora</h5>
+                            <p class="card-text">Control caspa. Limpieza renovadora.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 23.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 19.90</span>
+                                <small class="text-muted">375 ml</small>
+                            </p>
+
+                            <!-- Botón ADD-TO-CART (AJAX) -->
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-008"
+                                data-nombre="H&S Limpieza Renovadora 375ml" data-precio="19.90" data-servicio="farmacia"
+                                data-img="https://walmartcr.vtexassets.com/arquivos/ids/582272-800-600?v=638478746459670000&width=800&height=600&aspect=true"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 9 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://th.bing.com/th/id/R.c3272121271fcde4f7ee4b4580430f03?rik=6uy7c6Q%2bxgARZg&pid=ImgRaw&r=0"
+                            class="card-img-top" alt="Acondicionador Sedal Ceramidas">
+                        <div class="card-body text-center">
+                            <span class="badge bg-success text-light mb-2">Tottus</span>
+                            <h5 class="card-title">Sedal Ceramidas</h5>
+                            <p class="card-text">Fortalece y suaviza el cabello. Uso diario.</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 18.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 14.50</span>
+                                <small class="text-muted">340 ml</small>
+                            </p>
+
+                            <!-- Botón ADD-TO-CART (AJAX) -->
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-009"
+                                data-nombre="Sedal Ceramidas 340ml" data-precio="14.50" data-servicio="farmacia"
+                                data-img="https://th.bing.com/th/id/R.c3272121271fcde4f7ee4b4580430f03?rik=6uy7c6Q%2bxgARZg&pid=ImgRaw&r=0"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 10 -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0">
+                        <img src="https://tse2.mm.bing.net/th/id/OIP.cTVp7z0iDxHG1LZIrVPEgwHaHa?rs=1&pid=ImgDetMain"
+                            class="card-img-top" alt="Toallas Húmedas Ninet Clásicas">
+                        <div class="card-body text-center">
+                            <span class="badge bg-danger text-light mb-2">Plaza Vea</span>
+                            <h5 class="card-title">Toallas Húmedas Ninet</h5>
+                            <p class="card-text">Paquete de toallas húmedas suaves y resistentes (x120).</p>
+                            <p class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">S/ 10.90</span>
+                                <span class="fw-bold text-success fs-5">S/ 8.50</span>
+                            </p>
+
+                            <!-- Botón ADD-TO-CART (AJAX) -->
+                            <button class="btn btn-success text-light fw-bold w-100 add-to-cart" data-id="FAR-010"
+                                data-nombre="Toallas Húmedas Ninet x120" data-precio="8.50" data-servicio="farmacia"
+                                data-img="https://tse2.mm.bing.net/th/id/OIP.cTVp7z0iDxHG1LZIrVPEgwHaHa?rs=1&pid=ImgDetMain"
+                                data-cantidad="1">
+                                <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-3 mb-4">
+                    <h4 class="fw-bold">
+                        <img src="https://logospng.org/download/glovo/logo-glovo-2048.png" alt="Glovo Logo" width="100"
+                            class="mb-2">
+                    </h4>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Colabora con Glovo</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none">Trabaja con nosotros</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Glovo para Partners</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Enlaces de interés</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none">Acerca de nosotros</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Síguenos</h5>
+                    <a href="https://www.facebook.com/glovoperu/" class="text-white me-3"><i
+                            class="bi bi-facebook fs-4"></i></a>
+                    <a href="https://www.instagram.com/glovo_es/" class="text-white me-3"><i
+                            class="bi bi-instagram fs-4"></i></a>
+                    <a href="https://x.com/glovo" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+                    <div class="mt-3">
+                        <a href="https://apps.apple.com/us/app/glovo-food-delivery-takeaway/id951812684?mt=8">
+                            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                                alt="App Store" width="140">
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <a href="https://play.google.com/store/apps/details?id=com.glovo">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                                alt="Google Play" width="140">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 border-top border-secondary pt-3">
+                <p class="mb-0">&copy; 2025 Glovo Perú - Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+  
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
+</body>
+
+</html>

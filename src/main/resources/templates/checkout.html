@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout | Mercado GO</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fb
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: 24px auto
+        }
+
+        .ticket {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .06)
+        }
+
+        .ticket .head {
+            padding: 18px 20px;
+            border-bottom: 1px dashed #e5e9f2
+        }
+
+        .ticket .body {
+            padding: 4px 12px 2px 12px
+        }
+
+        .ticket .line {
+            display: grid;
+            grid-template-columns: 64px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 14px 8px;
+            border-bottom: 1px dashed #eff2f7
+        }
+
+        .ticket .line:last-child {
+            border-bottom: 0
+        }
+
+        .ticket img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #eef1f6
+        }
+
+        .name {
+            font-weight: 600
+        }
+
+        .svc {
+            font-size: .78rem;
+            font-weight: 600
+        }
+
+        .svc.COMIDA {
+            color: #2aa86b
+        }
+
+        .svc.FARMACIA {
+            color: #3b82f6
+        }
+
+        .svc.TIENDAS {
+            color: #b08900
+        }
+
+        .svc.SUPERMERCADO {
+            color: #dc3545
+        }
+
+        .uprice {
+            font-size: .9rem;
+            color: #6b7280
+        }
+
+        .qty {
+            font-size: .84rem;
+            color: #6b7280
+        }
+
+        .sub {
+            font-weight: 700;
+            color: #16a34a
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin: 22px 0 10px 2px;
+            color: #111827
+        }
+
+        .sticky-bar {
+            position: sticky;
+            bottom: 0;
+            z-index: 1040;
+            background: #fff;
+            border-top: 1px solid #edf0f5
+        }
+
+        .sticky-bar .inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 12px 8px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .totals {
+            display: flex;
+            gap: 18px
+        }
+
+        .totals .label {
+            font-size: .82rem;
+            color: #6b7280
+        }
+
+        .totals .value {
+            font-weight: 700
+        }
+
+        .btn-success {
+            background: #16a34a;
+            border: none
+        }
+
+        .card-form {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .06)
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+
+    <div class="wrap">
+
+        <!-- Alertas -->
+        <div th:if="${ok}" class="alert alert-success">
+            <i class="bi bi-check2-circle me-1"></i><span th:text="${ok}">Listo</span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${error}">Error</span>
+        </div>
+
+        <!-- Estado vacío -->
+        <div id="emptyCard"
+             th:if="${#lists.isEmpty(items)} and (${pedidoConfirmado} == null or ${pedidoConfirmado} == false)"
+             class="ticket mb-4">
+            <div class="head d-flex align-items-center gap-2">
+                <i class="bi bi-bag-x fs-4 text-secondary"></i>
+                <div>
+                    <div class="fw-bold">Tu carrito está vacío</div>
+                    <small class="text-muted">Agrega productos para continuar</small>
+                </div>
+            </div>
+            <div class="p-3">
+                <a th:href="@{/}" class="btn btn-success">
+                    <i class="bi bi-arrow-left me-1"></i> Ir a comprar
+                </a>
+            </div>
+        </div>
+
+        <!-- Ticket -->
+        <section id="ticketSec" th:classappend="${#lists.isEmpty(items)} ? ' d-none' : ''" class="ticket mb-4">
+            <div class="head">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="fw-bold">Productos</div>
+                    <small class="text-muted"><span th:text="${#lists.size(items)}">0</span> ítem(s)</small>
+                </div>
+            </div>
+
+            <div class="body">
+                <!-- SSR -->
+                <div class="line" th:each="it : ${items}">
+                    <img th:src="${it.imagenUrl}" alt="img">
+                    <div>
+                        <div class="name" th:text="${it.nombre}">Nombre del producto</div>
+                        <div class="d-flex gap-3">
+                            <span class="svc" th:classappend="${' ' + it.servicio}"
+                                  th:text="${it.servicio}">SERVICIO</span>
+                            <span class="qty">x <span th:text="${it.cantidad}">1</span></span>
+                            <span class="uprice"
+                                  th:text="${'S/ ' + #numbers.formatDecimal(it.precio,1,2)}">S/ 0.00</span>
+                        </div>
+                    </div>
+                    <div class="sub"
+                         th:text="${'S/ ' + #numbers.formatDecimal(it.subtotal,1,2)}">S/ 0.00</div>
+                </div>
+
+                <!-- CSR si no trajo items -->
+                <div id="ticketBody"></div>
+            </div>
+        </section>
+
+        <!-- Entrega y pago -->
+        <section class="card-form p-3 p-md-4 mb-5">
+            <div class="section-title">Entrega y pago</div>
+            <form th:action="@{/orden/confirmar}" method="post" id="confirmForm" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label d-flex justify-content-between align-items-center">
+                            <span>Dirección</span>
+                            <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal"
+                                    data-bs-target="#direccionModal">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Buscar en mapa
+                            </button>
+                        </label>
+
+                        <input id="direccionCheckout" name="direccion" class="form-control"
+                               placeholder="Av. Siempre Viva 742"
+                               th:value="${direccionInicial}" required minlength="5" maxlength="255">
+
+                        <div class="invalid-feedback">
+                            Ingresa una dirección válida (mínimo 5 caracteres).
+                        </div>
+
+                        <!-- Coordenadas para el backend -->
+                        <input type="hidden" name="latitud" id="latitud" th:value="${latitudInicial}">
+                        <input type="hidden" name="longitud" id="longitud" th:value="${longitudInicial}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Referencia</label>
+                        <input name="referencia" class="form-control"
+                               placeholder="Frente al parque / 3er piso">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Método de pago</label>
+                        <select name="pago" id="metodoPago" class="form-select" required>
+                            <option value="" selected disabled>Selecciona...</option>
+
+                            <option value="contraentrega">Contraentrega (pago en efectivo)</option>
+                            <option value="tarjeta" disabled>Tarjeta (próximamente)</option>
+                            <option value="yape">Yape / Plin</option>
+                        </select>
+
+                        <div class="invalid-feedback">Selecciona un método de pago.</div>
+                    </div>
+
+                    <!-- Detalles según el método de pago seleccionado -->
+                    <div class="col-12" id="pagoDetalles">
+                        <!-- Contraentrega -->
+                        <div id="contraBox" class="mt-3 border rounded p-3 d-none">
+                            <h6 class="mb-3">Pago contraentrega (efectivo)</h6>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Nombre de quien recibe</label>
+                                    <input type="text" class="form-control"
+                                           id="contraNombre" name="contraNombre"
+                                           placeholder="Juan Pérez">
+                                    <div class="invalid-feedback">
+                                        Ingresa el nombre de quien recibe.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Teléfono de contacto</label>
+                                    <input type="tel" class="form-control"
+                                           id="contraTelefono" name="contraTelefono"
+                                           placeholder="9XXXXXXXX" pattern="[0-9]{6,}">
+                                    <div class="invalid-feedback">
+                                        Ingresa un teléfono válido.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Pagarás con</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">S/</span>
+                                        <input type="number" class="form-control"
+                                               id="contraMonto" name="contraMonto"
+                                               min="0" step="0.1" placeholder="Por ej. 100.00">
+                                    </div>
+                                    <div class="form-text">
+                                        Así el repartidor lleva el vuelto exacto.
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Indica con cuánto pagarás.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta (placeholder por ahora) -->
+                        <div id="pagoTarjeta" class="border rounded p-3 mt-2 d-none bg-light">
+                            <p class="mb-0 text-muted text-start">
+                                Próximamente podrás pagar con tarjeta desde esta pantalla.
+                            </p>
+                        </div>
+
+                        <!-- Yape / Plin -->
+                        <div id="pagoYape" class="border rounded p-3 mt-3 d-none">
+                            <h6 class="mb-3">
+                                Pago con Yape / Plin 📱
+                            </h6>
+
+                            <div class="alert alert-info py-2">
+                                <strong>1️⃣ Envía el pago antes de confirmar el pedido</strong><br>
+                                Número para pagar:
+                                <span class="fw-bold text-primary">987 654 321</span><br>
+                                Titular: <span class="fw-bold">Glovo Perú SAC</span>
+                            </div>
+
+                            <div class="text-center mb-3">
+                                <img src="https://d1ih8jugeo2m5m.cloudfront.net/2023/04/codigo-qr-tiendanube-2048x2048.png" alt="QR Yape"
+                                     style="width:140px;border-radius:8px;">
+                                <div class="text-muted small mt-1">Escanea para pagar</div>
+                            </div>
+
+                            <div class="text-muted small mb-2">
+                                Luego de realizar el pago, completa los datos tal como
+                                aparecen en Yape/Plin.
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Nombre del titular que paga</label>
+                                    <input type="text" class="form-control"
+                                           name="yapeNombre" id="yapeNombre"
+                                           placeholder="Ej: Luis Quispe">
+                                    <div class="invalid-feedback">
+                                        Este dato es obligatorio.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Número desde donde pagaste</label>
+                                    <input type="tel" class="form-control"
+                                           name="yapeNumero" id="yapeNumero"
+                                           placeholder="9XXXXXXXX" pattern="[0-9]{9}">
+                                    <div class="invalid-feedback">
+                                        Ingresa un número válido.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Código/referencia del pago</label>
+                                    <input type="text" class="form-control"
+                                           name="yapeCodigo" id="yapeCodigo"
+                                           placeholder="Ej: OPE123456">
+                                    <div class="invalid-feedback">
+                                        Ingresa el código del pago.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- Barra fija inferior -->
+    <div id="stickyBar" class="sticky-bar"
+         th:classappend="${#lists.isEmpty(items)} ? ' d-none' : ''">
+        <div class="inner">
+            <div class="totals d-flex gap-4">
+                <div>
+                    <div class="label">Subtotal</div>
+                    <div id="subtotalVal" class="value"
+                         th:text="${'S/ ' + #numbers.formatDecimal(subTotal != null ? subTotal : 0,1,2)}">
+                        S/ 0.00</div>
+                </div>
+                <div>
+                    <div class="label">Envío</div>
+                    <div id="envioVal" class="value"
+                         th:text="${'S/ ' + #numbers.formatDecimal(envio != null ? envio : 0,1,2)}">
+                        S/ 0.00</div>
+                </div>
+                <div>
+                    <div class="label">Total</div>
+                    <div id="totalVal" class="value text-success fs-5"
+                         th:text="${'S/ ' + #numbers.formatDecimal(total != null ? total : 0,1,2)}">
+                        S/ 0.00</div>
+                </div>
+            </div>
+            <button id="btnConfirmar" class="btn btn-success px-4 py-2" form="confirmForm">
+                <i class="bi bi-check-circle me-1"></i> Confirmar pedido
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pedido confirmado -->
+    <div class="modal fade" id="pedidoModal" data-bs-backdrop="static"
+         data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="pedidoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="pedidoModalLabel">
+                        <i class="bi bi-check-circle me-2"></i>Pedido confirmado
+                    </h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-1">¡Tu pedido ha sido registrado con éxito!</p>
+                    <p class="text-muted" th:if="${pedidoId != null}">
+                        Código: <strong th:text="${pedidoId}">0</strong>
+                        <span class="ms-2" th:if="${pedidoTotal != null}">
+                            Total:
+                            <strong th:text="${'S/ ' + #numbers.formatDecimal(pedidoTotal,1,2)}">
+                                S/ 0.00
+                            </strong>
+                        </span>
+                    </p>
+                    <a href="/mis-pedidos" class="btn btn-success px-4">
+                        <i class="bi bi-list-ul me-1"></i> Ver mis pedidos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CSR render si no hubo items SSR -->
+    <script th:inline="javascript">
+        (() => {
+            const hasServerItems = /*[[${!#lists.isEmpty(items)}]]*/ false;
+            if (hasServerItems) return;
+
+            const money = (n) => new Intl.NumberFormat(
+                'es-PE',
+                { style: 'currency', currency: 'PEN' }
+            ).format(Number(n || 0));
+
+            const ticketSec = document.getElementById('ticketSec');
+            const ticketBody = document.getElementById('ticketBody');
+            const emptyCard = document.getElementById('emptyCard');
+            const stickyBar = document.getElementById('stickyBar');
+            const subtotalVal = document.getElementById('subtotalVal');
+            const envioVal = document.getElementById('envioVal');
+            const totalVal = document.getElementById('totalVal');
+
+            fetch('/cart/items', { credentials: 'same-origin' })
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(snap => {
+                    const items = snap.items || [];
+                    if (!items.length) return;
+
+                    emptyCard?.classList.add('d-none');
+                    ticketSec?.classList.remove('d-none');
+                    stickyBar?.classList.remove('d-none');
+
+                    ticketBody.innerHTML = '';
+                    items.forEach(it => {
+                        const line = document.createElement('div');
+                        line.className = 'line';
+                        const subtotal = Number(it.precio || 0) *
+                                         Number(it.cantidad || 1);
+                        line.innerHTML = `
+                            <img src="${it.imagenUrl || ''}" alt="img">
+                            <div>
+                              <div class="name">${it.nombre || ''}</div>
+                              <div class="d-flex gap-3">
+                                <span class="svc ${it.servicio || ''}">
+                                  ${it.servicio || ''}
+                                </span>
+                                <span class="qty">x <span>${it.cantidad || 1}</span></span>
+                                <span class="uprice">${money(it.precio)}</span>
+                              </div>
+                            </div>
+                            <div class="sub">${money(subtotal)}</div>
+                        `;
+                        ticketBody.appendChild(line);
+                    });
+
+                    const subTotal = (snap.total != null)
+                        ? Number(snap.total)
+                        : items.reduce((acc, it) =>
+                            acc + Number(it.precio || 0) *
+                                  Number(it.cantidad || 1), 0);
+
+                    const envio = 0;
+                    const total = subTotal + envio;
+
+                    if (subtotalVal) subtotalVal.textContent = money(subTotal);
+                    if (envioVal) envioVal.textContent = money(envio);
+                    if (totalVal) totalVal.textContent = money(total);
+                })
+                .catch(() => { });
+        })();
+    </script>
+
+    <!-- Lógica de validación, modal y métodos de pago -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('confirmForm');
+            const btn = document.getElementById('btnConfirmar');
+
+            // Validación general del form (Bootstrap)
+            if (form && btn) {
+                form.addEventListener('submit', (e) => {
+                    if (!form.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        form.classList.add('was-validated');
+                        return;
+                    }
+                    btn.disabled = true;
+                    btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Procesando...';
+                });
+            }
+
+            // Mostrar modal si pedidoConfirmado viene en el modelo
+            const pedidoConfirmado = /*[[${pedidoConfirmado}]]*/ false;
+            if (pedidoConfirmado) {
+                const modalEl = document.getElementById('pedidoModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                fetch('/cart/clear', { method: 'POST' })
+                    .then(() => localStorage.removeItem("cart"))
+                    .catch(() => { });
+
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    window.location.href = '/mis-pedidos';
+                });
+            }
+
+            // Lógica método de pago
+            const metodoPagoSelect = document.getElementById('metodoPago');
+            const boxContra = document.getElementById('contraBox');
+            const boxTarjeta = document.getElementById('pagoTarjeta');
+            const boxYape = document.getElementById('pagoYape');
+
+            const contraNombre = document.getElementById('contraNombre');
+            const contraTelefono = document.getElementById('contraTelefono');
+            const contraMonto = document.getElementById('contraMonto');
+
+            // 👇 IDs corregidos para Yape/Plin
+            const yapeNombre = document.getElementById('yapeNombre');
+            const yapeNumero = document.getElementById('yapeNumero');
+            const yapeCodigo = document.getElementById('yapeCodigo');
+
+            function actualizarSeccionPago() {
+                if (!metodoPagoSelect) return;
+
+                const v = metodoPagoSelect.value;
+
+                // Ocultar todas las cajas
+                [boxContra, boxTarjeta, boxYape].forEach(b => {
+                    if (b) b.classList.add('d-none');
+                });
+
+                // Reset de required/disabled
+                [
+                    contraNombre, contraTelefono, contraMonto,
+                    yapeNombre, yapeNumero, yapeCodigo
+                ].forEach(inp => {
+                    if (!inp) return;
+                    inp.required = false;
+                    inp.disabled = true;
+                });
+
+                if (v === 'contraentrega' && boxContra) {
+                    boxContra.classList.remove('d-none');
+                    [contraNombre, contraTelefono, contraMonto].forEach(inp => {
+                        if (!inp) return;
+                        inp.required = true;
+                        inp.disabled = false;
+                    });
+                } else if (v === 'yape' && boxYape) {
+                    boxYape.classList.remove('d-none');
+                    [yapeNombre, yapeNumero, yapeCodigo].forEach(inp => {
+                        if (!inp) return;
+                        inp.required = true;
+                        inp.disabled = false;
+                    });
+                } else if (v === 'tarjeta' && boxTarjeta) {
+                    boxTarjeta.classList.remove('d-none');
+                    // cuando implementes tarjeta, aquí marcas sus campos como required
+                }
+            }
+
+            if (metodoPagoSelect) {
+                metodoPagoSelect.addEventListener('change', actualizarSeccionPago);
+                actualizarSeccionPago();
+            }
+        });
+    </script>
+
+    <!-- MODAL DIRECCIÓN PARA CHECKOUT -->
+    <div class="modal fade" id="direccionModal" tabindex="-1"
+         aria-labelledby="direccionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="direccionModalLabel">
+                        ¿Dónde hay que hacer la entrega?
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <!-- Buscador -->
+                    <div class="input-group mb-3 shadow-sm"
+                         style="max-width:600px;margin:0 auto;">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="direccionInput"
+                               class="form-control border-start-0"
+                               placeholder="Buscar dirección">
+                        <button onclick="buscarDireccion()" class="btn"
+                                style="background-color:#00A082;color:white;">
+                            Buscar
+                        </button>
+                    </div>
+
+                    <!-- Resultados -->
+                    <ul id="resultados" class="list-group shadow-sm mb-3"
+                        style="max-width:600px;margin:0 auto;border-radius:12px;overflow:hidden;"></ul>
+
+                    <!-- Mapa -->
+                    <div id="map" style="height:350px;border-radius:12px;margin-bottom:15px;"></div>
+
+                    <!-- Botones -->
+                    <button class="btn w-100 mb-3"
+                            style="background-color:#E6F7F2;color:#00695C;border-radius:30px;font-weight:bold;"
+                            id="usarUbicacion">
+                        <i class="bi bi-geo-alt-fill me-2"></i>
+                        Utilizar la ubicación actual
+                    </button>
+
+                    <button class="btn w-100 fw-bold" id="confirmarDireccion"
+                            style="background-color:#00A082;color:white;
+                                   border-radius:30px;display:none;">
+                        Confirmar dirección
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        let map, marker, selectedCoords = null, selectedAddress = "";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalEl = document.getElementById('direccionModal');
+
+            modalEl.addEventListener('shown.bs.modal', function () {
+                if (!map) {
+                    map = L.map('map').setView([-12.0464, -77.0428], 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap'
+                    }).addTo(map);
+
+                    map.on('click', function (e) {
+                        if (marker) map.removeLayer(marker);
+                        marker = L.marker(e.latlng).addTo(map);
+                        selectedCoords = e.latlng;
+                        selectedAddress = "";
+                        document.getElementById("confirmarDireccion").style.display = "block";
+                    });
+                }
+                setTimeout(() => { map.invalidateSize(); }, 300);
+            });
+
+            document.getElementById("usarUbicacion").addEventListener("click", () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
+                } else {
+                    alert("La geolocalización no es compatible en este navegador.");
+                }
+            });
+
+            document.getElementById("confirmarDireccion").addEventListener("click", async () => {
+                if (!selectedCoords) {
+                    alert("Selecciona un punto en el mapa o una dirección primero.");
+                    return;
+                }
+
+                if (!selectedAddress) {
+                    try {
+                        const url =
+                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedCoords.lat}&lon=${selectedCoords.lng}&addressdetails=1`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        selectedAddress = data.display_name || "";
+                    } catch (e) { }
+                }
+
+                const direccionFinal =
+                    selectedAddress ||
+                    (`Lat: ${selectedCoords.lat.toFixed(5)}, Lon: ${selectedCoords.lng.toFixed(5)}`);
+
+                const dirInput = document.getElementById("direccionCheckout");
+                const latInput = document.getElementById("latitud");
+                const lonInput = document.getElementById("longitud");
+
+                if (dirInput) dirInput.value = direccionFinal;
+                if (latInput) latInput.value = selectedCoords.lat;
+                if (lonInput) lonInput.value = selectedCoords.lng;
+
+                try {
+                    await fetch('/api/ubicacion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            direccion: direccionFinal,
+                            latitud: selectedCoords.lat,
+                            longitud: selectedCoords.lng
+                        })
+                    });
+                } catch (e) {
+                    console.error("No se pudo guardar la ubicación preferida", e);
+                }
+
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.hide();
+            });
+        });
+
+        async function buscarDireccion() {
+            const query = document.getElementById("direccionInput").value;
+            if (!query) return;
+
+            const url =
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            let lista = document.getElementById("resultados");
+            lista.innerHTML = "";
+            if (data.length === 0) {
+                lista.innerHTML = "<li class='list-group-item'>No se encontraron resultados</li>";
+                return;
+            }
+
+            data.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item.display_name;
+                li.className = "list-group-item list-group-item-action";
+                li.style.cursor = "pointer";
+                li.onclick = () => {
+                    document.getElementById("direccionInput").value = item.display_name;
+                    lista.innerHTML = "";
+
+                    const lat = parseFloat(item.lat);
+                    const lon = parseFloat(item.lon);
+
+                    if (map) {
+                        map.setView([lat, lon], 15);
+                        if (marker) map.removeLayer(marker);
+                        marker = L.marker([lat, lon]).addTo(map);
+                    }
+
+                    selectedCoords = { lat, lng: lon };
+                    selectedAddress = item.display_name;
+                    document.getElementById("confirmarDireccion").style.display = "block";
+                };
+                lista.appendChild(li);
+            });
+        }
+
+        function onGeoSuccess(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            if (map) {
+                map.setView([lat, lon], 15);
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lon]).addTo(map);
+            }
+
+            selectedCoords = { lat, lng: lon };
+            selectedAddress = "";
+            document.getElementById("confirmarDireccion").style.display = "block";
+        }
+
+        function onGeoError() {
+            alert("No se pudo obtener tu ubicación.");
+        }
+    </script>
+
+</body>
+
+</html>

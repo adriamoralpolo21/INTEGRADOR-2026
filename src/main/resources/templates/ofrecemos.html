@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia - Mercado GO</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+       
+        body {
+            padding-top: 76px;
+            /* deja solo este valor */
+        }
+    /* Ajustes visuales suaves para tarjetas/íconos */
+    .icon-card { border-radius: 16px; }
+    .icon-card:hover { transform: translateY(-3px); transition: .2s ease; }
+    .step-card { border-radius: 14px; }
+    .badge-brand { background-color:#FFD700; color:#006400; border:1px solid #006400; }
+    /* Primera sección debajo del navbar fixed-top (tu fragment ya añade padding-top, pero por si acaso) */
+    .mt-safe { margin-top: 40px; }
+
+     #testimoniosCarousel .card {
+    background-color: #fff;
+    border-radius: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  #testimoniosCarousel .card:hover {
+    transform: scale(1.02);
+  }
+
+  #testimoniosCarousel .carousel-control-prev-icon,
+  #testimoniosCarousel .carousel-control-next-icon {
+    background-size: 60%, 60%;
+  }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR (Thymeleaf fragment si lo tienes) -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+ <!-- HERO -->
+  <section class="bg-light text-dark text-center py-5 mt-safe" style="margin-top: 0";>
+    <div class="container">
+      <h1 class="display-5 fw-bold">¿Qué ofrecemos?</h1>
+      <p class="lead mb-0">Rapidez, variedad y seguridad para que recibas lo que necesitas, donde estés.</p>
+    </div>
+  </section>
+
+  <!-- ¿QUÉ ES MERCADO GO? -->
+  <section class="py-5 bg-white text-center">
+    <div class="container">
+      <h2 class="fw-bold mb-3">¿Qué es Mercado GO?</h2>
+      <p class="lead text-muted mx-auto" style="max-width:860px;">
+        Somos una plataforma de delivery que conecta a usuarios con restaurantes, farmacias,
+        supermercados y tiendas locales. Nuestro compromiso es llevarte lo que necesites
+        de forma rápida, segura y eficiente.
+      </p>
+      <img src="https://i.ibb.co/0ywQYm0z/Whats-App-Image-2026-05-14-at-00-15-48-1.jpg"
+           alt="Reparto Mercado GO"
+           class="img-fluid rounded shadow-sm mt-4" style="max-width:760px;">
+    </div>
+  </section>
+
+  <!-- PRINCIPALES OFERTAS -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row text-center g-4">
+        <div class="col-md-4">
+          <div class="card shadow border-0 icon-card h-100">
+            <div class="card-body p-4">
+              <i class="bi bi-lightning-charge-fill text-warning fs-1 mb-2"></i>
+              <h3 class="fw-bold">Rapidez</h3>
+              <p class="mb-0">Entregamos lo que necesites en el menor tiempo posible, con repartidores en toda la ciudad.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow border-0 icon-card h-100">
+            <div class="card-body p-4">
+              <i class="bi bi-bag-check-fill text-success fs-1 mb-2"></i>
+              <h3 class="fw-bold">Variedad</h3>
+              <p class="mb-0">Desde comida hasta farmacias y supermercados, todo lo que buscas en una sola app.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow border-0 icon-card h-100">
+            <div class="card-body p-4">
+              <i class="bi bi-shield-check text-primary fs-1 mb-2"></i>
+              <h3 class="fw-bold">Seguridad</h3>
+              <p class="mb-0">Pagos seguros y seguimiento en tiempo real para tu tranquilidad.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ¿CÓMO FUNCIONA? -->
+  <section class="py-5 bg-light">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-5">¿Cómo funciona?</h2>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm step-card p-3 h-100">
+            <i class="bi bi-phone fs-1 text-success mb-3"></i>
+            <h5 class="fw-bold">1. Pide desde la app</h5>
+            <p class="mb-0">Elige comida, medicinas, supermercado o tus tiendas favoritas.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm step-card p-3 h-100">
+            <i class="bi bi-bicycle fs-1 text-success mb-3"></i>
+            <h5 class="fw-bold">2. Lo recogemos</h5>
+            <p class="mb-0">Un Glover se acerca al punto de venta más cercano.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm step-card p-3 h-100">
+            <i class="bi bi-geo-alt-fill fs-1 text-success mb-3"></i>
+            <h5 class="fw-bold">3. Te llega en minutos</h5>
+            <p class="mb-0">Sigue tu pedido en tiempo real y recibe con total seguridad.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENTAJAS EXTRA -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="fw-bold text-center mb-5">Nuestras ventajas</h2>
+      <div class="row text-center g-4">
+        <div class="col-md-3">
+          <div class="card h-100 shadow border-0 icon-card">
+            <div class="card-body p-4">
+              <i class="bi bi-clock-fill text-secondary fs-3 mb-2"></i>
+              <h5 class="fw-bold">Disponibilidad</h5>
+              <p class="mb-0">Estamos activos todos los días, a toda hora.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 shadow border-0 icon-card">
+            <div class="card-body p-4">
+              <i class="bi bi-map-fill text-danger fs-3 mb-2"></i>
+              <h5 class="fw-bold">Cobertura</h5>
+              <p class="mb-0">Operamos en múltiples ciudades del Perú.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 shadow border-0 icon-card">
+            <div class="card-body p-4">
+              <i class="bi bi-megaphone-fill text-warning fs-3 mb-2"></i>
+              <h5 class="fw-bold">Promociones</h5>
+              <p class="mb-0">Descuentos exclusivos y cupones para usuarios.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 shadow border-0 icon-card">
+            <div class="card-body p-4">
+              <i class="bi bi-headset text-primary fs-3 mb-2"></i>
+              <h5 class="fw-bold">Soporte 24/7</h5>
+              <p class="mb-0">Atención rápida para resolver tus dudas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPROMISO CON LA COMUNIDAD -->
+  <section class="py-5 bg-light">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-4">Nuestro compromiso</h2>
+      <p class="lead text-muted mb-5 mx-auto" style="max-width:900px;">
+        Trabajamos con miles de repartidores y comercios locales para impulsar la economía,
+        fomentar el empleo y reducir barreras del comercio digital.
+      </p>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm p-4 h-100">
+            <i class="bi bi-heart-fill text-danger fs-1 mb-3"></i>
+            <h5 class="fw-bold">Apoyo a negocios locales</h5>
+            <p class="mb-0">Gran parte de nuestros partners son emprendedores peruanos.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm p-4 h-100">
+            <i class="bi bi-recycle text-success fs-1 mb-3"></i>
+            <h5 class="fw-bold">Sostenibilidad</h5>
+            <p class="mb-0">Iniciativas para reducir plásticos y emisiones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+ <!-- TESTIMONIOS DESLIZABLES -->
+<section class="py-5 bg-light">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Lo que dicen nuestros usuarios</h2>
+
+    <!-- Carrusel -->
+    <div id="testimoniosCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+
+        <!-- Testimonio 1 -->
+        <div class="carousel-item active">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+              <p class="fst-italic mb-3">“Siempre recibo mis pedidos súper rápido. La app es fácil de usar.”</p>
+              <h6 class="fw-bold mb-0">— Andrea R., Lima</h6>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 2 -->
+        <div class="carousel-item">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+              <p class="fst-italic mb-3">“Me encanta que puedo pedir desde mis tiendas favoritas en un solo lugar.”</p>
+              <h6 class="fw-bold mb-0">— Carlos M., Arequipa</h6>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 3 -->
+        <div class="carousel-item">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+              <p class="fst-italic mb-3">“Excelente atención al cliente, me ayudaron a resolver un problema en minutos.”</p>
+              <h6 class="fw-bold mb-0">— Lucía G., Cusco</h6>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 4 -->
+        <div class="carousel-item">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+              <p class="fst-italic mb-3">“Los Glovers son muy amables y siempre llegan con una sonrisa. ¡Buen servicio!”</p>
+              <h6 class="fw-bold mb-0">— Diego T., Trujillo</h6>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 5 -->
+        <div class="carousel-item">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+              <p class="fst-italic mb-3">“He encontrado promociones buenísimas y la entrega siempre puntual.”</p>
+              <h6 class="fw-bold mb-0">— María E., Piura</h6>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Controles -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimoniosCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimoniosCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
+    </div>
+  </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-5 text-center" style="background-color:#00A082; color:white;">
+    <div class="container">
+      <h2 class="fw-bold mb-3">Empieza a disfrutar Glovo en Perú</h2>
+      <p class="lead mb-4">Recibe tus pedidos donde estés. ¡Fácil, rápido y seguro!</p>
+    </div>
+  </section>
+    
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-3 mb-4">
+                    <h4 class="fw-bold">
+                        <img src="https://logospng.org/download/glovo/logo-glovo-2048.png" alt="Glovo Logo" width="100"
+                            class="mb-2">
+                    </h4>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Colabora con Glovo</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none">Trabaja con nosotros</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Glovo para Partners</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Enlaces de interés</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none">Acerca de nosotros</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold" style="color:#FFC244;">Síguenos</h5>
+                    <a href="https://www.facebook.com/glovoperu/" class="text-white me-3"><i
+                            class="bi bi-facebook fs-4"></i></a>
+                    <a href="https://www.instagram.com/glovo_es/" class="text-white me-3"><i
+                            class="bi bi-instagram fs-4"></i></a>
+                    <a href="https://x.com/glovo" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+                    <div class="mt-3">
+                        <a href="https://apps.apple.com/us/app/glovo-food-delivery-takeaway/id951812684?mt=8">
+                            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                                alt="App Store" width="140">
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <a href="https://play.google.com/store/apps/details?id=com.glovo">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                                alt="Google Play" width="140">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 border-top border-secondary pt-3">
+                <p class="mb-0">&copy; 2025 Glovo Perú - Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

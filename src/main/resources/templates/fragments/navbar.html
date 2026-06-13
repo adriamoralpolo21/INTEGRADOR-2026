@@ -1,0 +1,528 @@
+<th:block xmlns:th="http://www.thymeleaf.org"
+          xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+          th:fragment="navbar">
+
+  <style>
+    /* Altura correcta al usar fixed-top */
+    body {
+      padding-top: 76px;
+    }
+
+    .navbar {
+      background-color: #FFC244;
+    }
+
+    .navbar.py-2 {
+      padding-top: .35rem !important;
+      padding-bottom: .35rem !important;
+    }
+
+    .navbar.fixed-top {
+      z-index: 1055;
+    }
+
+    .dropdown-menu {
+      z-index: 2000;
+    }
+
+    .navbar-brand img {
+      height: 48px;
+      width: auto;
+    }
+
+    .navbar-nav .nav-link {
+      color: #00A082 !important;
+      font-weight: 600;
+    }
+
+    .navbar-toggler-icon {
+      filter: invert(100%);
+    }
+
+    .user-btn {
+      border-radius: 9999px;
+      padding: .35rem .9rem;
+      line-height: 1.2;
+    }
+
+    .user-name {
+      max-width: 220px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    /* === Carrito Offcanvas === */
+    #offcanvasCarrito .offcanvas-body {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 0;
+    }
+
+    #listaCarrito {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      margin-bottom: 12px;
+    }
+
+    #listaCarrito .list-group-item {
+      border: 0;
+      padding: 12px 0;
+    }
+
+    #listaCarrito img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    /* === Toasts === */
+    .toast-container {
+      z-index: 2000;
+    }
+
+    /* Animación badge pedidos activos */
+    @keyframes pulse-badge {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .badge-pedidos-anim {
+      animation: pulse-badge 1.3s infinite;
+    }
+
+    /* Animación estado EN_CAMINO (badge) */
+    @keyframes glow-state {
+      0% { box-shadow: 0 0 0 rgba(37, 99, 235, 0.0); }
+      50% { box-shadow: 0 0 12px rgba(37, 99, 235, 0.6); }
+      100% { box-shadow: 0 0 0 rgba(37, 99, 235, 0.0); }
+    }
+
+    .badge-en-camino {
+      animation: glow-state 1.5s infinite;
+    }
+
+    /* === Tema oscuro === */
+    body.dark-mode {
+      background-color: #0f172a !important;
+      color: #e5e7eb !important;
+    }
+
+    body.dark-mode .navbar {
+      background-color: #0f172a !important;
+    }
+
+    body.dark-mode .navbar-nav .nav-link {
+      color: #e5e7eb !important;
+    }
+
+    body.dark-mode .dropdown-menu {
+      background-color: #111827;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .dropdown-item {
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .dropdown-item:hover {
+      background-color: #1f2937;
+    }
+
+    body.dark-mode .offcanvas,
+    body.dark-mode .card,
+    body.dark-mode .accordion-item,
+    body.dark-mode .modal-content {
+      background-color: #111827;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .btn-outline-dark {
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+
+    body.dark-mode .btn-outline-dark:hover {
+      background-color: #374151;
+    }
+
+    body.dark-mode .list-group-item {
+      background-color: transparent;
+      color: #e5e7eb;
+    }
+
+       /* Badge de rol (ADMIN / REPARTIDOR) */
+    .role-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      margin-left: .35rem;
+      vertical-align: middle;
+    }
+    .role-badge-admin {
+      background-color: #b91c1c;
+      color: #fff;
+    }
+    .role-badge-repartidor {
+      background-color: #1d4ed8;
+      color: #fff;
+    }
+  </style>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-2">
+    <div class="container">
+      <a class="navbar-brand fw-bold" th:href="@{/}">
+        <img src="https://i.ibb.co/0ywQYm0z/Whats-App-Image-2026-05-14-at-00-15-48-1.jpg" alt="Mercado GO">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/soporte}">Soporte</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/ofrecemos}">Qué ofrecemos</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/comida}">Comida</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/farmacia}">Farmacia</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/tiendas}">Tiendas</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/supermercado}">Supermercados</a></li>
+
+          <!-- Mis pedidos + badge (solo usuario logueado) -->
+          <li class="nav-item" sec:authorize="isAuthenticated()">
+            <a class="nav-link position-relative" th:href="@{/mis-pedidos}">
+              <i class="bi bi-clock-history me-1"></i> Mis pedidos
+              <span th:if="${pedidosActivos > 0}"
+                    class="badge rounded-pill bg-success ms-1 badge-pedidos-anim"
+                    th:text="${pedidosActivos}">
+                1
+              </span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- derecha: botones sesión + tema -->
+        <div class="ms-3 d-flex gap-2 align-items-center">
+          <!-- Tema oscuro toggle -->
+          <button id="btnTheme" type="button" class="btn btn-outline-dark btn-sm" title="Tema claro/oscuro">
+            <i id="iconTheme" class="bi bi-moon-fill"></i>
+          </button>
+
+          <!-- Anónimo -->
+          <a sec:authorize="!isAuthenticated()" th:href="@{/login}"
+             class="btn user-btn fw-bold d-flex align-items-center"
+             style="background:#00A082;color:#fff;">
+            <i class="bi bi-person me-2"></i> Iniciar sesión
+          </a>
+          <a sec:authorize="!isAuthenticated()" th:href="@{/register}"
+             class="btn btn-outline-dark user-btn fw-bold d-none d-lg-flex align-items-center">
+            <i class="bi bi-person-plus me-2"></i> Registrarse
+          </a>
+
+          <!-- Autenticado -->
+          <div class="dropdown" sec:authorize="isAuthenticated()">
+            <button class="btn btn-outline-dark dropdown-toggle user-btn fw-bold" data-bs-toggle="dropdown">
+  <i class="bi bi-person-circle me-2"></i>
+  <span class="user-name" sec:authentication="name">usuario</span>
+
+  <!-- 👇 Badge según rol -->
+  <span class="role-badge role-badge-admin" sec:authorize="hasRole('ADMIN')">
+    ADMIN
+  </span>
+  <span class="role-badge role-badge-repartidor" sec:authorize="hasRole('REPARTIDOR')">
+    REPARTIDOR
+  </span>
+</button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" th:href="@{/}"><i class="bi bi-house me-2"></i>Inicio</a></li>
+              <li><a class="dropdown-item" th:href="@{/mis-pedidos}">
+                <i class="bi bi-bag-check me-2"></i>Mis pedidos
+              </a></li>
+              <li sec:authorize="hasRole('ADMIN')">
+                <a class="dropdown-item" th:href="@{/admin}"><i class="bi bi-speedometer2 me-2"></i>Panel admin</a>
+              </li>
+              <li sec:authorize="hasRole('REPARTIDOR')">
+                <a class="dropdown-item" th:href="@{/repartidor/pedidos}">
+                  <i class="bi bi-truck me-2"></i>Pedidos para reparto
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form th:action="@{/logout}" method="post" class="px-3 py-1">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                  <button class="btn btn-danger w-100">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Botón flotante del carrito -->
+  <button id="btnCarrito" class="btn btn-lg shadow rounded-circle"
+          style="position: fixed; right: 20px; bottom: 20px; width: 64px; height: 64px; background:#00A082;color:#fff; z-index:1040;"
+          data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
+    <i class="bi bi-bag-fill fs-3"></i>
+    <span id="badgeCarrito"
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+  </button>
+
+  <!-- Offcanvas Carrito -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCarrito" aria-labelledby="offcanvasCarritoLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasCarritoLabel">Tu carrito</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column">
+      <ul id="listaCarrito" class="list-group list-group-flush mb-3"></ul>
+      <div id="cartEmpty" class="text-muted d-none">Tu carrito está vacío.</div>
+
+      <div class="mt-auto">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>Total:</strong>
+          <strong id="totalCarrito">S/. 0.00</strong>
+        </div>
+        <div class="d-flex gap-2">
+          <button id="vaciarCarrito" class="btn btn-outline-danger w-50">
+            <i class="bi bi-trash3 me-1"></i> Vaciar
+          </button>
+
+          <a th:href="@{/checkout}" class="btn btn-success w-50" sec:authorize="isAuthenticated()">
+            <i class="bi bi-cash-coin me-1"></i> Pagar
+          </a>
+          <a th:href="@{/login}" class="btn btn-success w-50" sec:authorize="!isAuthenticated()">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS GLOBALES (ok / error) -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div th:if="${ok}" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true" id="toastOk"
+         data-bs-autohide="true" data-bs-delay="4000">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-check-circle me-2"></i>
+          <span th:text="${ok}">Operación realizada correctamente.</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
+
+    <div th:if="${error}" class="toast align-items-center text-bg-danger border-0" role="alert"
+         aria-live="assertive" aria-atomic="true" id="toastError"
+         data-bs-autohide="true" data-bs-delay="5000">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <span th:text="${error}">Ocurrió un error.</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS carrito -->
+  <script>
+    (function () {
+      const badge = document.getElementById('badgeCarrito');
+      const lista = document.getElementById('listaCarrito');
+      const total = document.getElementById('totalCarrito');
+      const btnVaciar = document.getElementById('vaciarCarrito');
+      const emptyMsg = document.getElementById('cartEmpty');
+
+      const toForm = (obj) => new URLSearchParams(obj).toString();
+      const money = (n) => 'S/. ' + Number(n).toFixed(2);
+
+      function render(cart) {
+        if (badge) badge.textContent = cart.count ?? 0;
+        if (total) total.textContent = money(cart.total || 0);
+        lista.innerHTML = '';
+
+        if (!cart.items || cart.items.length === 0) {
+          emptyMsg.classList.remove('d-none');
+          return;
+        }
+        emptyMsg.classList.add('d-none');
+
+        cart.items.forEach(it => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.innerHTML = `
+          <div class="d-flex align-items-center gap-2">
+            <img src="${it.imagenUrl || ''}" alt="">
+            <div class="flex-grow-1">
+              <div class="fw-semibold">${it.nombre}</div>
+              <small class="text-muted">
+                Unit: ${money(it.precio)} · Subtotal: ${money(it.subtotal || (it.precio * it.cantidad))}
+              </small>
+              <div class="mt-1 d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary qty-minus" data-id="${it.id}">-</button>
+                <input class="form-control form-control-sm qty-input" data-id="${it.id}" value="${it.cantidad}"
+                       style="width:60px;text-align:center;">
+                <button class="btn btn-sm btn-outline-secondary qty-plus" data-id="${it.id}">+</button>
+                <button class="btn btn-sm btn-outline-danger ms-auto remove-one" data-id="${it.id}" title="Quitar 1">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+          </div>`;
+          lista.appendChild(li);
+        });
+
+        lista.querySelectorAll('.qty-plus').forEach(b =>
+          b.addEventListener('click', () => changeQty(b.dataset.id, +1)));
+        lista.querySelectorAll('.qty-minus').forEach(b =>
+          b.addEventListener('click', () => changeQty(b.dataset.id, -1)));
+        lista.querySelectorAll('.qty-input').forEach(inp =>
+          inp.addEventListener('change', () =>
+            setQty(inp.dataset.id, Math.max(1, parseInt(inp.value || '1', 10)))));
+        lista.querySelectorAll('.remove-one').forEach(b =>
+          b.addEventListener('click', async () => {
+            const id = b.dataset.id;
+            const inp = lista.querySelector(`.qty-input[data-id="${id}"]`);
+            const current = Math.max(1, parseInt(inp?.value || '1', 10));
+            if (current > 1) await setQty(id, current - 1);
+            else await removeItem(id);
+          }));
+      }
+
+      async function fetchJSON(url, options) {
+        const res = await fetch(url, options);
+        return await res.json();
+      }
+
+      async function load() {
+        try {
+          render(await fetchJSON('/cart/items'));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      async function add(data) {
+        const cart = await fetchJSON('/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: toForm(data)
+        });
+        render(cart);
+      }
+
+      async function removeItem(id) {
+        const cart = await fetchJSON('/cart/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: toForm({ id })
+        });
+        render(cart);
+      }
+
+      async function clearAll() {
+        const cart = await fetchJSON('/cart/clear', { method: 'POST' });
+        render(cart);
+      }
+
+      async function changeQty(id, delta) {
+        const inp = lista.querySelector(`.qty-input[data-id="${id}"]`);
+        const now = Math.max(1, (parseInt(inp?.value || '1', 10) + delta));
+        await setQty(id, now);
+      }
+
+      async function setQty(id, cantidad) {
+        const cart = await fetchJSON('/cart/qty', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: toForm({ id, cantidad })
+        });
+        render(cart);
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.add-to-cart');
+        if (!btn) return;
+        e.preventDefault();
+        const data = {
+          id: btn.dataset.id,
+          nombre: btn.dataset.nombre,
+          precio: btn.dataset.precio,
+          img: btn.dataset.img || '',
+          servicio: btn.dataset.servicio || '',
+          cantidad: btn.dataset.cantidad || 1
+        };
+        add(data);
+      });
+
+      if (btnVaciar) btnVaciar.addEventListener('click', clearAll);
+      load();
+    })();
+  </script>
+
+  <!-- JS: toasts + tema oscuro -->
+  <script>
+    window.addEventListener('load', () => {
+      // === TOASTS ===
+      if (window.bootstrap && bootstrap.Toast) {
+        document.querySelectorAll('.toast').forEach(el => {
+          const t = new bootstrap.Toast(el);
+          t.show();
+        });
+      }
+
+      // === TEMA OSCURO ===
+      const body = document.body;
+      const btnTheme = document.getElementById('btnTheme');
+      const iconTheme = document.getElementById('iconTheme');
+
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          body.classList.add('dark-mode');
+          if (iconTheme) {
+            iconTheme.classList.remove('bi-moon-fill');
+            iconTheme.classList.add('bi-sun-fill');
+          }
+        } else {
+          body.classList.remove('dark-mode');
+          if (iconTheme) {
+            iconTheme.classList.remove('bi-sun-fill');
+            iconTheme.classList.add('bi-moon-fill');
+          }
+        }
+      }
+
+      // cargar preferencia
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      applyTheme(savedTheme);
+
+      if (btnTheme) {
+        btnTheme.addEventListener('click', () => {
+          const current = body.classList.contains('dark-mode') ? 'dark' : 'light';
+          const next = current === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('theme', next);
+          applyTheme(next);
+        });
+      }
+    });
+  </script>
+
+</th:block>

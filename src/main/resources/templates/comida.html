@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comida - Glovo Perú</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+  .card {
+      border: none;
+      border-radius: 15px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card img {
+      height: 230px;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+    /* Espaciado general */
+    section {
+      margin-top: 150px;
+      margin-bottom: 60px;
+    }
+
+    .row.g-4 {
+      row-gap: 40px !important;
+    }
+
+    /* Botones */
+    .btn-success {
+      background-color: #00A082;
+      border: none;
+    }
+
+    .btn-success:hover {
+      background-color: #007a63;
+    }
+
+    /* Título */
+    h2 {
+      margin-bottom: 40px;
+    }
+
+    /* Modal menú */
+    .dish-card {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 100%;
+      background: #fff;
+    }
+
+    .dish-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .badge-brand {
+      background-color: #FFC244;
+      color: #0b3b2e;
+      font-weight: 700;
+    }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR (Thymeleaf fragment si lo tienes) -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+ <!-- SECCIÓN TIENDAS (COMIDA) -->
+  <section id="inicio" class="bg-light text-dark text-center p-5" style="margin-top: 0;">
+    <div class="container">
+      <h2 class="mb-4 text-success fw-bold text-center">Restaurantes disponibles</h2>
+      <div class="row g-4 justify-content-center">
+
+        <!-- Bembos -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://peruretail.sfo3.cdn.digitaloceanspaces.com/wp-content/uploads/WhatsApp-Image-2023-09-13-at-3.32.01-PM-4.jpeg" class="card-img-top" alt="Bembos">
+            <div class="card-body text-center">
+              <h5 class="card-title">Bembos</h5>
+              <p class="card-text">Las hamburguesas más famosas del Perú 🍔.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Bembos" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KFC -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://peruretail.sfo3.cdn.digitaloceanspaces.com/wp-content/uploads/kfc-22-1024x576.png" class="card-img-top" alt="KFC">
+            <div class="card-body text-center">
+              <h5 class="card-title">KFC</h5>
+              <p class="card-text">El pollo crujiente que todos aman 🍗.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="KFC" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pizza Hut -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://peruretail.sfo3.cdn.digitaloceanspaces.com/wp-content/uploads/pizza-hut-22.jpg" class="card-img-top" alt="Pizza Hut">
+            <div class="card-body text-center">
+              <h5 class="card-title">Pizza Hut</h5>
+              <p class="card-text">Las mejores pizzas y combos familiares 🍕.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Pizza Hut" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chifa Wong -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://assets.vogue.com/photos/5fbe92ab7566c0912a137147/master/w_1600%2Cc_limit/DSC_3151.jpg" class="card-img-top" alt="Chifa">
+            <div class="card-body text-center">
+              <h5 class="card-title">Chifa Wong</h5>
+              <p class="card-text">Auténtico sabor oriental en cada plato 🥡.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Chifa Wong" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roky's -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.pSVgOpGNXLtET09dHt6dwgAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" class="card-img-top" alt="Roky's">
+            <div class="card-body text-center">
+              <h5 class="card-title">Roky’s</h5>
+              <p class="card-text">El clásico pollo a la brasa peruano 🔥.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Roky’s" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Starbucks -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://www.the-sun.com/wp-content/uploads/sites/6/2023/08/LG-STARBUCKS-FALL-LINEUP-OFFPLAT.jpg?strip=all&quality=100&w=1920&h=1080&crop=1" class="card-img-top" alt="Starbucks">
+            <div class="card-body text-center">
+              <h5 class="card-title">Starbucks</h5>
+              <p class="card-text">Cafés, frappés y postres irresistibles ☕.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Starbucks" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pizzería Roma -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://tse1.mm.bing.net/th/id/OIP.1JaghNBdd1H38w5e1QOraQHaEK?rs=1&pid=ImgDetMain&o=7&rm=3" class="card-img-top" alt="Pizzería Roma">
+            <div class="card-body text-center">
+              <h5 class="card-title">Pizzería Roma</h5>
+              <p class="card-text">Pizzas artesanales con masa madre y horno de leña.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Pizzería Roma" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pollería Don Pepe -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://th.bing.com/th/id/R.e5378c56f731b15c2b2baeacbf0b17ba?rik=kXAmtxLYOdo%2b7Q&riu=http%3a%2f%2fetterem.hu%2fimg%2fmax960%2fp8685n%2f1378371209-3677.jpg&ehk=Kmpt9ZGCWGrNwGLVr%2bQD8C%2fHtpk9bmTc%2fYqJmwPM4PE%3d&risl=&pid=ImgRaw&r=0" class="card-img-top" alt="Pollería Don Pepe">
+            <div class="card-body text-center">
+              <h5 class="card-title">Pollería Don Pepe</h5>
+              <p class="card-text">Pollo a la brasa, papas fritas y ensaladas frescas.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Pollería Don Pepe" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cevichería El Puerto -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://parrillas.top/wp-content/uploads/2023/11/image-23.png" class="card-img-top" alt="Cevichería El Puerto">
+            <div class="card-body text-center">
+              <h5 class="card-title">Cevichería El Puerto</h5>
+              <p class="card-text">Ceviches, tiraditos y mariscos frescos todos los días.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Cevichería El Puerto" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hamburguesas GrillMaster -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://i.ytimg.com/vi/GaZeIt8E0Sk/maxresdefault.jpg" class="card-img-top" alt="Hamburguesas GrillMaster">
+            <div class="card-body text-center">
+              <h5 class="card-title">Hamburguesas GrillMaster</h5>
+              <p class="card-text">Hamburguesas jugosas a la parrilla con salsas caseras.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Hamburguesas GrillMaster" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tacos Mexicanos -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://recetinas.com/wp-content/uploads/2022/06/tacos-mexicanos.jpg" class="card-img-top" alt="Tacos Mexicanos">
+            <div class="card-body text-center">
+              <h5 class="card-title">Tacos Mexicanos</h5>
+              <p class="card-text">Tacos al pastor, burritos y nachos con guacamole.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Tacos Mexicanos" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chifa Oriental -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.MViS-y3r_5bvIsHgWZFjqgHaFi?rs=1&pid=ImgDetMain&o=7&rm=3" class="card-img-top" alt="Chifa Oriental">
+            <div class="card-body text-center">
+              <h5 class="card-title">Chifa Oriental</h5>
+              <p class="card-text">Arroz chaufa, tallarines saltados y wantanes crocantes.</p>
+              <button class="btn btn-success btn-ver-menu" data-store="Chifa Oriental" type="button">Ver menú</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: Menú por tienda -->
+  <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title">Menú de <span id="storeName" class="text-success fw-bold"></span></h5>
+            <small id="storeHint" class="text-muted d-block">Seleccionamos algunos platos representativos.</small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="menuGrid" class="row g-3">
+            <!-- Aquí se inyectan los platos -->
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <div class="input-group" style="max-width: 320px;">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input id="searchInput" type="text" class="form-control" placeholder="Buscar en este menú...">
+          </div>
+          <div class="d-flex gap-2">
+            <button id="btnAleatorio" class="btn btn-outline-secondary">
+              <i class="bi bi-shuffle me-1"></i> Otro surtido
+            </button>
+            <button class="btn btn-success" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white pt-5 pb-3">
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <div class="col-md-3 mb-4">
+          <h4 class="fw-bold">
+            <img src="https://logospng.org/download/glovo/logo-glovo-2048.png" alt="Glovo Logo" width="100" class="mb-2">
+          </h4>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Colabora con Glovo</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Trabaja con nosotros</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Glovo para Partners</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Enlaces de interés</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Acerca de nosotros</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Síguenos</h5>
+          <a href="https://www.facebook.com/glovoperu/" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
+          <a href="https://www.instagram.com/glovo_es/" class="text-white me-3"><i class="bi bi-instagram fs-4"></i></a>
+          <a href="https://x.com/glovo" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+          <div class="mt-3">
+            <a href="https://apps.apple.com/us/app/glovo-food-delivery-takeaway/id951812684?mt=8"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" width="140"></a>
+          </div>
+          <div class="mt-2">
+            <a href="https://play.google.com/store/apps/details?id=com.glovo&referrer=adjust_reftag%3DcDHXITPTWKZtV%26utm_source%3DHomepage%2B-%2BAndroid%26utm_campaign%3Dfooter_es_es&pli=1"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" width="140"></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4 border-top border-secondary pt-3">
+        <p class="mb-0">&copy; 2025 Glovo Perú - Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- LÓGICA: Menú por tienda con concordancia -->
+<script>
+  const PEN = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
+
+  // Catálogos por tienda (platos representativos)
+  const MENUS = {
+    'Bembos': [
+      { id: 'COM-001', nombre: 'Hamburguesa Clásica', precio: 18.9, img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop', desc: 'Carne 100% res, lechuga, tomate, salsa de la casa.' },
+      { id: 'COM-002', nombre: 'Cheeseburger Doble', precio: 24.5, img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop', desc: 'Doble queso, doble carne y pan brioche.' },
+      { id: 'COM-003', nombre: 'Papas Clásicas', precio: 9.9, img: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?q=80&w=800&auto=format&fit=crop', desc: 'Crocantes y doraditas.' },
+      { id: 'COM-004', nombre: 'Inka Cola 500ml', precio: 6.5, img: 'https://tse3.mm.bing.net/th/id/OIP.M77zcRTFLhiiPtsKkJH1aAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3.' }
+    ],
+    'KFC': [
+      { id: 'COM-005', nombre: 'Bucket 8 presas', precio: 48.9, img: 'https://tse2.mm.bing.net/th/id/OIP.k1T7jBI18hfop_61WyfzBQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Pollo frito crujiente receta original.' },
+      { id: 'COM-006', nombre: 'Sandwich Crispy', precio: 16.9, img: 'https://tse1.mm.bing.net/th/id/OIP.O5B0a1DrwmcDswnTed88IwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Filete crujiente con mayonesa y pepinillos.' },
+      { id: 'COM-007', nombre: 'Papas con gravy', precio: 7.9, img: 'https://static.vecteezy.com/system/resources/previews/025/065/142/non_2x/french-fries-with-ai-generated-free-png.png', desc: 'Clásicas con salsa gravy.' },
+      { id: 'COM-008', nombre: 'Chicha morada', precio: 6.0, img: 'https://tse1.mm.bing.net/th/id/OIP.Y6pp-EwdHx1w6BxKjxS3nAHaGv?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Bebida peruana refrescante.' }
+    ],
+    'Pizza Hut': [
+      { id: 'COM-009', nombre: 'Pizza Pepperoni', precio: 35.0, img: 'https://tse2.mm.bing.net/th/id/OIP.hQO4pTb_XhWo1rWAfsSowgHaE8?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Pepperoni, queso mozzarella y salsa de tomate.' },
+      { id: 'COM-010', nombre: 'Pizza Hawaiana', precio: 32.5, img: 'https://nuestrasrecetas.es/wp-content/uploads/2015/05/hawaiana-1024x683.jpg', desc: 'Jamón, piña y queso mozzarella.' },
+      { id: 'COM-011', nombre: 'Alitas BBQ', precio: 18.0, img: 'https://assets.unileversolutions.com/recipes-v2/237633.jpg?imwidth=1200', desc: 'Alitas bañadas en salsa BBQ.' },
+      { id: 'COM-012', nombre: 'Ensalada César', precio: 15.0, img: 'https://resizer.glanacion.com/resizer/4QUgb1zl6McuzVEOI7GmE5MGZ5E=/1920x0/filters:quality(80)/cloudfront-us-east-1.images.arcpublishing.com/lanacionar/DGAKCY5BYNAO5JJV3DC55FC7G4.jpg', desc: 'Lechuga, pollo a la parrilla, crutones y aderezo César.' }
+    ],
+    'Chifa Wong': [
+      { id: 'COM-013', nombre: 'Arroz Chaufa Especial', precio: 22.0, img: 'https://tse2.mm.bing.net/th/id/OIP.nyQkQsVuXG-nuuxYRWLhLgHaE8?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Arroz frito con pollo, cerdo, huevo y verduras.' },
+      { id: 'COM-014', nombre: 'Tallarines Saltados', precio: 20.0, img: 'https://th.bing.com/th/id/R.35d1ccaba3f3d966d0759f9722b79acd?rik=bPKIk2eX4CcMQw&pid=ImgRaw&r=0', desc: 'Tallarines salteados con carne y verduras.' },
+      { id: 'COM-015', nombre: 'Wantanes Fritos', precio: 12.0, img: 'https://i.pinimg.com/736x/01/2b/d0/012bd0be4061b82190d056fad2900c0e--ideas-para.jpg', desc: 'Crocantes wantanes rellenos de carne.' },
+      { id: 'COM-016', nombre: 'Sopa Wantán', precio: 10.0, img: 'https://recetasperuanas.gratis/wp-content/uploads/2020/04/sopawantandes.jpeg', desc: 'Caldo con wantanes y verduras.' }
+    ],
+    'Roky’s': [
+      { id: 'COM-017', nombre: 'Pollo a la Brasa Entero', precio: 45.0, img: 'https://blog.redbus.pe/wp-content/uploads/2017/12/pollo-a-la-brasa.jpg', desc: 'Pollo sazonado y asado a la perfección.' },
+      { id: 'COM-018', nombre: 'Media Pollo a la Brasa', precio: 25.0, img: 'https://tse4.mm.bing.net/th/id/OIP.JvXSl8qvJV_WmoyyNwjDAAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Media porción de nuestro famoso pollo.' },
+      { id: 'COM-019', nombre: 'Papas Fritas', precio: 8.0, img: 'https://cocina-casera.com/wp-content/uploads/2023/01/patatas-fritas-crujientes-francesa-1.jpg', desc: 'Crocantes y doraditas.' },
+      { id: 'COM-020', nombre: 'Ensalada Mixta', precio: 10.0, img: 'https://jameaperu.com/assets/images/2025/08/ensalada-de-polleria_800x534.webp', desc: 'Lechuga, tomate, cebolla y zanahoria.' }
+    ],
+    'Starbucks': [
+      { id: 'COM-021', nombre: 'Café Latte', precio: 12.0, img: 'https://th.bing.com/th/id/R.e8b6f6c7304cdc1ea66851cf0f0870e4?rik=UsC%2fvXXOt9bYcQ&pid=ImgRaw&r=0', desc: 'Espresso con leche vaporizada.' },
+      { id: 'COM-022', nombre: 'Frappuccino de Mocha', precio: 15.0, img: 'https://www.cleaneatingkitchen.com/wp-content/uploads/2023/06/Iced-Mocha-Vertical-Hero.jpg', desc: 'Bebida fría con café, chocolate y crema batida.' },
+      { id: 'COM-023', nombre: 'Muffin de Arándanos', precio: 8.0, img: 'https://www.splenda.com/wp-content/themes/bistrotheme/assets/recipe-images/blueberry-muffins.jpg', desc: 'Muffin esponjoso con arándanos frescos.' },
+      { id: 'COM-024', nombre: 'Croissant de Jamón y Queso', precio: 10.0, img: 'https://okdiario.com/img/2018/09/20/receta-de-croissant-de-jamon-y-queso.jpg', desc: 'Croissant relleno de jamón y queso derretido.' }
+    ],
+    'Pizzería Roma': [
+      { id: 'COM-025', nombre: 'Pizza Americana', precio: 25.0, img: 'https://www.periodistadigital.com/wp-content/uploads/2020/02/pizza-americana.jpg', desc: 'Queso y salsa de tomate .' },
+      { id: 'COM-026', nombre: 'Pizza Italiana', precio: 30.0, img: 'https://tse3.mm.bing.net/th/id/OIP.rA-zNE7UZnPjdT-DN9egSQHaE7?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Tomate cortado, queso y salame.' },
+      { id: 'COM-027', nombre: 'Pizza francesa', precio: 30.0, img: 'https://th.bing.com/th/id/R.769f14d64ce70d7d908e69383881efb7?rik=XYWEXZV0yDKsOg&riu=http%3a%2f%2f2.bp.blogspot.com%2f_wFwmyRJYpPI%2fSefWq115kOI%2fAAAAAAAAApc%2fT_lGadrREts%2fs400%2ffoto_pizza_francesa.jpg&ehk=SOAcj%2fZTvEkq1jUv32hbhw4V%2bPNpTS9AmYSSEzfBMLU%3d&risl=&pid=ImgRaw&r=0', desc: 'Toomate , queso rellenado al rededor y mortadela.' },
+      { id: 'COM-028', nombre: 'Pizza Romana', precio: 35.0, img: 'https://th.bing.com/th/id/R.87ed1e0c71d5c90edfe71d5323335726?rik=bGX3LmSBiBDpog&pid=ImgRaw&r=0', desc: 'Salsa de tomate,jamon cocido,champiñones,aceitunas negras y mozzarella en barra.' }
+    ],
+    'Pollería Don Pepe': [
+      { id: 'COM-029', nombre: 'Pollo a la Brasa Familiar', precio: 50.0, img: 'https://tse2.mm.bing.net/th/id/OIP.1BlYUycnVGg0OzRyL-jUsgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Pollo entero con guarniciones para toda la familia.' },
+      { id: 'COM-030', nombre: 'Media Pollo a la Brasa', precio: 28.0, img: 'https://th.bing.com/th/id/R.b7c8fa5a2578960885c5961b3adca1d1?rik=JztnNQCiVQrtew&riu=http%3a%2f%2fwww.polleriaperuana.cl%2fwp-content%2fuploads%2f2020%2f04%2fmedio-pollo-a-la-brasa.jpg&ehk=v%2bBT4JdW7XflcWHibOkAlFm85kxXMVgT7LtuAW6Jbhc%3d&risl=&pid=ImgRaw&r=0', desc: 'Media porción de nuestro delicioso pollo.' },
+      { id: 'COM-031', nombre: 'Papas a la Huancaína', precio: 12.0, img: 'https://tse3.mm.bing.net/th/id/OIP.Jvuo-8lG33FmbzU_LWDZCwHaF7?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Papas con salsa de queso y ají amarillo.' },
+      { id: 'COM-032', nombre: 'Ensalada Fresca', precio: 10.0, img: 'https://th.bing.com/th/id/R.83ca3b005ac5cd8b0442cdc65fe78e64?rik=9UUwzFfMOx6fsQ&riu=http%3a%2f%2f4.bp.blogspot.com%2f_g1Ut5T76JhU%2fSfUaXGXg5NI%2fAAAAAAAAABU%2fJUQ8saXs96U%2fs320%2fFIRMA%2bANA%2b453.jpg&ehk=LIwlc9hoiARQ0u%2fplX01uWVKKn1ZH9P33MC%2fel6oaN4%3d&risl=&pid=ImgRaw&r=0', desc: 'Lechuga, tomate, cebolla y zanahoria.' }
+    ],
+    'Cevichería El Puerto': [
+      { id: 'COM-033', nombre: 'Ceviche Clásico', precio: 30.0, img: 'https://walac.pe/wp-content/uploads/2016/06/ceviche.jpg', desc: 'Pescado fresco marinado en limón con cebolla y cilantro.' },
+      { id: 'COM-034', nombre: 'Tiradito de Pescado', precio: 28.0, img: 'https://tse1.mm.bing.net/th/id/OIP.SkFJlwJQ6DSJsGYDlmDwrAHaEE?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Láminas de pescado con salsa de ají amarillo.' },
+      { id: 'COM-035', nombre: 'Choritos a la Chalaca', precio: 20.0, img: 'https://tse3.mm.bing.net/th/id/OIP.ifbBql5-FQXxRwsoUwfD4wHaFD?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Mejillones con cebolla, tomate y limón.' },
+      { id: 'COM-036', nombre: 'Arroz con Mariscos', precio: 25.0, img: 'https://static.wixstatic.com/media/9755d8_c65f90dcb02f4d7482cd02c3280e03ab~mv2.png/v1/fill/w_980,h_551,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/9755d8_c65f90dcb02f4d7482cd02c3280e03ab~mv2.png', desc: 'Arroz salteado con una mezcla de mariscos.' }
+    ],
+    'Hamburguesas GrillMaster': [
+      { id: 'COM-037', nombre: 'Hamburguesa GrillMaster', precio: 22.0, img: 'https://i.pinimg.com/736x/ff/1d/bf/ff1dbf404b1ea45713277c322846aa5a.jpg', desc: 'Carne a la parrilla con queso, lechuga y tomate.' },
+      { id: 'COM-038', nombre: 'Hamburguesa BBQ', precio  : 24.0, img: 'https://tse1.mm.bing.net/th/id/OIP.lW6pt5aJin54wJGowYW1agHaE8?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Carne con salsa BBQ, cebolla caramelizada y queso.' },
+      { id: 'COM-039', nombre: 'Papas Sazonadas', precio: 10.0, img: 'https://medlineplus.gov/images/recipe_potatowedges_fb.jpg', desc: 'Papas fritas con mezcla de especias.' },
+      { id: 'COM-040', nombre: 'Aros de Cebolla', precio: 12.0, img: 'https://media.lmneuquen.com/p/c3bafa1a31f6b846865896986d0d2ced/adjuntos/195/imagenes/007/265/0007265577/aros-cebollajpeg.jpeg', desc: 'Cebolla empanizada y frita.' }
+    ],
+    'Tacos Mexicanos': [
+      { id: 'COM-041', nombre: 'Taco al Pastor', precio:  12.0, img: 'https://tse2.mm.bing.net/th/id/OIP.Xd8pF40qNVGEdy3JHvobBgHaE8?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Taco con carne al pastor, piña y cebolla.' },
+      { id: 'COM-042', nombre: 'Burrito de Pollo', precio: 18.0, img: 'https://img-global.cpcdn.com/recipes/b319e4814b350ed6/1502x1064cq70/burritos-de-pollo-foto-principal.jpg', desc: 'Tortilla rellena de pollo, arroz, frijoles y salsa.' },
+      { id: 'COM-043', nombre: 'Nachos con Guacamole', precio: 15.0, img: 'https://img.freepik.com/fotos-premium/nachos-salsa-guacamole-aguacate_511235-10641.jpg', desc: 'Totopos con guacamole fresco y queso derretido.' },
+      { id: 'COM-044', nombre: 'Quesadilla de Queso', precio: 14.0, img: 'https://th.bing.com/th/id/R.100889fc97fe9ccd06934a92cbeb4ade?rik=zT4y%2bHeEfV0QOQ&pid=ImgRaw&r=0', desc: 'Tortilla rellena de queso fundido.' }
+    ],
+    'Chifa Oriental': [
+      { id: 'COM-045', nombre: 'Arroz Chaufa de pollo ', precio: 22.0, img: 'https://tse2.mm.bing.net/th/id/OIP.Kz4DEOL2cSbAxaMBqaWMyAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Arroz frito con pollo, cerdo, huevo y verduras.' },
+      { id: 'COM-046', nombre: 'Aeropuerto', precio: 20.0, img: 'https://i.ytimg.com/vi/KfM8UjY-lHs/maxresdefault.jpg', desc: 'Tallarines salteados con carne y verduras.' },
+      { id: 'COM-047', nombre: 'Wantanes Fritos', precio: 12.0, img: 'https://minichef.b-cdn.net/assets/58/b8/c3/7e/66/da/receta%20de%20wantan%20casero.png', desc: 'Crocantes wantanes .' },
+      { id: 'COM-048', nombre: 'Arroz chaufa de carne', precio: 10.0, img: 'https://tse1.mm.bing.net/th/id/OIP.S5NE8sLPMjBwLY36RSK89gHaE8?rs=1&pid=ImgDetMain&o=7&rm=3', desc: 'Arroz frito con carne, huevo y tomate.' }
+    ],
+        // ... sigue con los demás MENUS (idénticos a los tuyos) ...
+  };
+
+  const menuModalEl = document.getElementById('menuModal');
+  const menuModal = new bootstrap.Modal(menuModalEl);
+  const menuGrid = document.getElementById('menuGrid');
+  const storeNameEl = document.getElementById('storeName');
+  const searchInput = document.getElementById('searchInput');
+
+  const shuffle = (arr) => arr.map(v => ({ v, r: Math.random() })).sort((a, b) => a.r - b.r).map(({ v }) => v);
+
+  function renderMenu(store, filtro = '') {
+    const lista = MENUS[store] || [];
+    const filtrados = lista.filter(i => i.nombre.toLowerCase().includes(filtro.toLowerCase()));
+    const mostrar = shuffle(filtrados.length ? filtrados : lista).slice(0, 8);
+
+    menuGrid.innerHTML = '';
+    mostrar.forEach(p => {
+      const col = document.createElement('div');
+      col.className = 'col-12 col-sm-6 col-lg-3';
+      col.innerHTML = `
+        <div class="dish-card d-flex flex-column">
+          <img class="dish-img" src="${p.img}" alt="${p.nombre}">
+          <div class="p-3 d-flex flex-column flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <h6 class="mb-0">${p.nombre}</h6>
+              <span class="badge badge-brand">${store}</span>
+            </div>
+            <p class="text-success fw-bold mb-2">${PEN.format(p.precio)}</p>
+            <p class="text-muted small mb-3">${p.desc || ''}</p>
+            <div class="mt-auto d-grid">
+              <button class="btn btn-success add-to-cart"
+                      data-id="${p.id}"
+                      data-nombre="${p.nombre}"
+                      data-precio="${p.precio}"
+                      data-servicio="comida"
+                      data-img="${p.img}"
+                      data-cantidad="1">
+                <i class="bi bi-bag-plus me-1"></i> Agregar
+              </button>
+            </div>
+          </div>
+        </div>`;
+      menuGrid.appendChild(col);
+    });
+  }
+
+  // Abrir modal y cargar menú correcto según la tienda
+  let tiendaActual = '';
+  document.querySelectorAll('.btn-ver-menu').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tiendaActual = btn.dataset.store;
+      storeNameEl.textContent = tiendaActual;
+      searchInput.value = '';
+      renderMenu(tiendaActual);
+      menuModal.show();
+    });
+  });
+
+  // Buscar dentro del menú
+  searchInput.addEventListener('input', (e) => renderMenu(tiendaActual, e.target.value));
+
+  // Surtido aleatorio
+  document.getElementById('btnAleatorio').addEventListener('click', () => renderMenu(tiendaActual));
+</script>
+
+
+</body>
+
+</html>

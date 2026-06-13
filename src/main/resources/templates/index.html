@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERCADO GO</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* navbar fixed-top deja espacio */
+    body { padding-top: 110px; }
+    /* estos estilos son propios del index (puedes moverlos a un .css global si quieres) */
+    .ciudad-card { overflow: hidden; border-radius: 15px; transition: transform .3s ease, box-shadow .3s ease; }
+    .ciudad-card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,.3); }
+    .ciudad-img { transition: transform .4s ease; }
+    .ciudad-card:hover .ciudad-img { transform: scale(1.1); }
+  </style>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+
+  <!-- Usa el fragmento global (navbar + carrito + offcanvas) -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+  <!-- HERO -->
+  <section id="inicio" class="bg-light text-dark text-center p-5">
+    <div class="container">
+      <h1 class="display-4 fw-bold">
+        Tu delivery rápido en todo el Perú
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Peru.svg" alt="Bandera de Perú" width="40" style="margin-left:8px;vertical-align:middle;">
+      </h1>
+      <p class="lead">“Estamos creciendo para llegar a más ciudades del Perú 🇵🇪”.</p>
+      
+<!-- Barra de búsqueda -->
+<div class="input-group mt-3 shadow-sm" style="max-width:500px;margin:0 auto;">
+  <input type="text"
+         id="direccionHome"
+         class="form-control"
+         placeholder="Ingresa tu dirección..."
+         th:value="${direccionInicial}">
+  <button class="btn" style="background-color:#00A082;color:white;"
+          data-bs-toggle="modal" data-bs-target="#direccionModal">
+    Buscar
+  </button>
+</div>
+    </div>
+  </section>
+
+  <!-- MODAL DIRECCIÓN (igual que tu versión) -->
+  <div class="modal fade" id="direccionModal" tabindex="-1" aria-labelledby="direccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold" id="direccionModalLabel">¿Dónde hay que hacer la entrega?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="input-group mb-3 shadow-sm" style="max-width:600px;margin:0 auto;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" id="direccionInput" class="form-control border-start-0" placeholder="Buscar dirección">
+            <button onclick="buscarDireccion()" class="btn" style="background-color:#00A082;color:white;">Buscar</button>
+          </div>
+          <ul id="resultados" class="list-group shadow-sm mb-3" style="max-width:600px;margin:0 auto;border-radius:12px;overflow:hidden;"></ul>
+          <div id="map" style="height:350px;border-radius:12px;margin-bottom:15px;"></div>
+          <button class="btn w-100 mb-3" style="background-color:#E6F7F2;color:#00695C;border-radius:30px;font-weight:bold;" id="usarUbicacion">
+            <i class="bi bi-geo-alt-fill me-2"></i> Utilizar la ubicación actual
+          </button>
+          <button class="btn w-100 fw-bold" id="confirmarDireccion" style="background-color:#00A082;color:white;border-radius:30px;display:none;">
+            Confirmar dirección
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAFLET -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+ <script>
+  let map, marker, selectedCoords = null, selectedAddress = "";
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalEl = document.getElementById('direccionModal');
+
+    // Inicializar mapa cuando se abre el modal
+    modalEl.addEventListener('shown.bs.modal', function () {
+      if (!map) {
+        map = L.map('map').setView([-12.0464, -77.0428], 13); // Lima
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Click en mapa → marcador + coords
+        map.on('click', function (e) {
+          if (marker) map.removeLayer(marker);
+          marker = L.marker(e.latlng).addTo(map);
+          selectedCoords = e.latlng;
+          selectedAddress = ""; // no viene de Nominatim
+          document.getElementById("confirmarDireccion").style.display = "block";
+        });
+      }
+      setTimeout(() => { map.invalidateSize(); }, 300);
+    });
+
+    // Botón "Usar ubicación actual"
+    document.getElementById("usarUbicacion").addEventListener("click", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
+      } else {
+        alert("La geolocalización no es compatible en este navegador.");
+      }
+    });
+
+    // Botón "Confirmar dirección"
+     document.getElementById("confirmarDireccion").addEventListener("click", async () => {
+      const inputBusqueda = document.getElementById("direccionInput");
+
+      // Si aún no hay coordenadas pero hay texto, intentamos geocodificar
+      if (!selectedCoords && inputBusqueda && inputBusqueda.value.trim() !== "") {
+        try {
+          const q = inputBusqueda.value.trim();
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&addressdetails=1&limit=1`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.length > 0) {
+            const item = data[0];
+            selectedCoords = { lat: parseFloat(item.lat), lng: parseFloat(item.lon) };
+            selectedAddress = item.display_name || q;
+
+            // Pintamos en el mapa si existe
+            if (map) {
+              map.setView([selectedCoords.lat, selectedCoords.lng], 15);
+              if (marker) map.removeLayer(marker);
+              marker = L.marker([selectedCoords.lat, selectedCoords.lng]).addTo(map);
+            }
+          }
+        } catch (e) {
+          // ignoramos, se validará abajo
+        }
+      }
+
+      if (!selectedCoords) {
+        alert("Selecciona una dirección (clic en mapa o en un resultado) o escribe una dirección válida.");
+        return;
+      }
+
+      // Si no hay texto de dirección, intentamos reverse geocoding
+      if (!selectedAddress) {
+        try {
+          const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedCoords.lat}&lon=${selectedCoords.lng}&addressdetails=1`;
+          const res = await fetch(url);
+          const data = await res.json();
+          selectedAddress = data.display_name || "";
+        } catch (e) {
+          // si falla, dejamos selectedAddress vacío
+        }
+      }
+
+      const direccionFinal =
+        selectedAddress || `Lat: ${selectedCoords.lat.toFixed(5)}, Lon: ${selectedCoords.lng.toFixed(5)}`;
+
+      // Rellenar la barra del home
+      const homeInput = document.getElementById('direccionHome');
+      if (homeInput) homeInput.value = direccionFinal;
+
+      // Guardar en el backend para reutilizar en checkout
+      try {
+        const resp = await fetch('/api/ubicacion', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            direccion: direccionFinal,
+            latitud: selectedCoords.lat,
+            longitud: selectedCoords.lng
+          })
+        });
+
+        if (resp.ok) {
+          alert("Dirección guardada correctamente. Se usará en el checkout.");
+          // window.location.href = '/checkout'; // opcional
+        } else if (resp.status === 401) {
+          alert("Debes iniciar sesión para guardar tu dirección.");
+        } else {
+          alert("Ocurrió un error al guardar la dirección.");
+        }
+      } catch (e) {
+        alert("Error de conexión al guardar la dirección.");
+      }
+
+      // Cerrar modal
+      const modalEl = document.getElementById('direccionModal');
+      const closeBtn = modalEl.querySelector('.btn-close');
+
+      if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        modal.hide();
+      } else if (closeBtn) {
+        closeBtn.click();
+      }
+    });
+  });
+
+  // Buscar dirección por texto
+  async function buscarDireccion() {
+    const query = document.getElementById("direccionInput").value;
+    if (!query) return;
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    let lista = document.getElementById("resultados");
+    lista.innerHTML = "";
+    if (data.length === 0) {
+      lista.innerHTML = "<li class='list-group-item'>No se encontraron resultados</li>";
+      return;
+    }
+
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item.display_name;
+      li.className = "list-group-item list-group-item-action";
+      li.style.cursor = "pointer";
+      li.onclick = () => {
+        document.getElementById("direccionInput").value = item.display_name;
+        lista.innerHTML = "";
+
+        const lat = parseFloat(item.lat);
+        const lon = parseFloat(item.lon);
+
+        if (map) {
+          map.setView([lat, lon], 15);
+          if (marker) map.removeLayer(marker);
+          marker = L.marker([lat, lon]).addTo(map);
+        }
+
+        selectedCoords = { lat, lng: lon };
+        selectedAddress = item.display_name;
+        document.getElementById("confirmarDireccion").style.display = "block";
+      };
+      lista.appendChild(li);
+    });
+  }
+
+  function onGeoSuccess(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    if (map) {
+      map.setView([lat, lon], 15);
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lon]).addTo(map);
+    }
+
+    selectedCoords = { lat, lng: lon };
+    selectedAddress = "";
+    document.getElementById("confirmarDireccion").style.display = "block";
+  }
+
+  function onGeoError() {
+    alert("No se pudo obtener tu ubicación.");
+  }
+</script>
+
+  <!-- CIUDADES -->
+  <section id="ciudades" class="py-5">
+    <div class="container">
+      <h2 class="text-center fw-bold mb-4">Ciudades Disponibles</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 shadow ciudad-card ciudad" style="cursor:pointer;" data-ciudad="lima">
+            <img src="https://th.bing.com/th/id/R.10d133af03e75492f98baee428de13a9?rik=nVfci%2b856dgD5Q&pid=ImgRaw&r=0" class="card-img-top ciudad-img" alt="Lima">
+            <div class="card-body">
+              <h5 class="card-title">Lima</h5>
+              <p class="card-text">La capital, con todo a tu alcance.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 shadow ciudad-card ciudad" style="cursor:pointer;" data-ciudad="arequipa">
+            <img src="https://cdn.wiaggi.com/wp-content/uploads/2023/04/arequipa-1536x865.jpg" class="card-img-top ciudad-img" alt="Arequipa">
+            <div class="card-body">
+              <h5 class="card-title">Arequipa</h5>
+              <p class="card-text">La Ciudad Blanca, llena de sabor y tradición.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 shadow ciudad-card ciudad" style="cursor:pointer;" data-ciudad="trujillo">
+            <img src="https://tse4.mm.bing.net/th/id/OIP._AwOZ_kLAPNJnWfJ26oltwHaEU?rs=1&pid=ImgDetMain&o=7&rm=3" class="card-img-top ciudad-img" alt="Trujillo">
+            <div class="card-body">
+              <h5 class="card-title">Trujillo</h5>
+              <p class="card-text">Cultura y delivery rápido en el norte.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card h-100 shadow ciudad-card ciudad" style="cursor:pointer;" data-ciudad="piura">
+            <img src="https://viasatelital.com/mapas/images/piura001.jpg" class="card-img-top ciudad-img" alt="Piura">
+            <div class="card-body">
+              <h5 class="card-title">Piura</h5>
+              <p class="card-text">El calor del norte también llega a tu mesa.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card h-100 shadow ciudad-card ciudad" style="cursor:pointer;" data-ciudad="chimbote">
+            <img src="https://www.tunesaexpres.com/wp-content/uploads/2019/11/chimbote.png" class="card-img-top ciudad-img" alt="Chimbote">
+            <div class="card-body">
+              <h5 class="card-title">Chimbote</h5>
+              <p class="card-text">La bahía y sus sabores, ahora a domicilio.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="text-center py-5" style="background-color:#FFC244;color:#000;">
+    <div class="container">
+      <h2 class="fw-bold mb-4">¿Cómo funciona?</h2>
+      <div class="row">
+        <div class="col-md-4"><i class="bi bi-bag-check-fill display-4"></i><h5 class="mt-3">Elige tu pedido</h5></div>
+        <div class="col-md-4"><i class="bi bi-cart-fill display-4"></i><h5 class="mt-3">Haz tu compra</h5></div>
+        <div class="col-md-4"><i class="bi bi-bicycle display-4"></i><h5 class="mt-3">Recíbelo en minutos</h5></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="py-5">
+    <div class="container">
+      <h2 class="text-center fw-bold mb-4">Servicios disponibles</h2>
+      <div class="row g-4">
+        <!-- Si NO está autenticado: abre modal login -->
+        <div class="col-md-3" sec:authorize="!isAuthenticated()">
+          <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-cup-straw display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Comida</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- Si SÍ está autenticado: ir directo a la ruta -->
+        <div class="col-md-3" sec:authorize="isAuthenticated()">
+          <a th:href="@{/comida}" class="text-decoration-none">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-cup-straw display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Comida</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Tiendas -->
+        <div class="col-md-3" sec:authorize="!isAuthenticated()">
+          <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-shop display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Tiendas</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3" sec:authorize="isAuthenticated()">
+          <a th:href="@{/tiendas}" class="text-decoration-none">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-shop display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Tiendas</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Farmacia -->
+        <div class="col-md-3" sec:authorize="!isAuthenticated()">
+          <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-capsule-pill display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Farmacia</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3" sec:authorize="isAuthenticated()">
+          <a th:href="@{/farmacia}" class="text-decoration-none">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-capsule-pill display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Farmacia</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Supermercados -->
+        <div class="col-md-3" sec:authorize="!isAuthenticated()">
+          <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-basket2-fill display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Supermercados</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3" sec:authorize="isAuthenticated()">
+          <a th:href="@{/supermercado}" class="text-decoration-none">
+            <div class="card h-100 text-center shadow">
+              <div class="card-body">
+                <i class="bi bi-basket2-fill display-4" style="color:#00A082;"></i>
+                <h5 class="card-title mt-3">Supermercados</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIÉNES SOMOS -->
+  <section id="quienes-somos" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center fw-bold mb-4">¿Quiénes somos?</h2>
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <img src="https://officesnapshots.com/wp-content/uploads/2017/04/Axilis_office-20-1200x801.jpg"
+               alt="Equipo Glovo" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-md-6">
+          <p class="lead">
+            En Glovo Perú trabajamos para acercarte lo que necesitas, cuando lo necesitas.
+            Somos una plataforma de delivery que conecta restaurantes, tiendas, farmacias y supermercados
+            con miles de clientes en todo el país.
+          </p>
+          <p>Nuestro compromiso es brindar un servicio <b>rápido, seguro y confiable</b>, apoyando a negocios locales.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRA TU RESTAURANTE -->
+  <section id="registro-restaurantes" class="py-5" style="background-color:#E6F7F2;">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-4">Registra tu restaurante en Glovo en 3 pasos y aumenta tus ventas</h2>
+      <div class="row g-4">
+        <div class="col-md-4"><div class="card h-100 shadow border-0"><div class="card-body">
+          <i class="bi bi-pencil-square display-4" style="color:#00A082;"></i><h5 class="mt-3">1. Regístrate</h5>
+          <p>Completa un breve formulario con los datos de tu restaurante.</p></div></div></div>
+        <div class="col-md-4"><div class="card h-100 shadow border-0"><div class="card-body">
+          <i class="bi bi-shop display-4" style="color:#00A082;"></i><h5 class="mt-3">2. Sube tu menú</h5>
+          <p>Agrega tus productos, precios y fotos para que los clientes los vean.</p></div></div></div>
+        <div class="col-md-4"><div class="card h-100 shadow border-0"><div class="card-body">
+          <i class="bi bi-graph-up-arrow display-4" style="color:#00A082;"></i><h5 class="mt-3">3. Empieza a vender</h5>
+          <p>Recibe pedidos a través de la app y haz crecer tu negocio.</p></div></div></div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white pt-5 pb-3">
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <div class="col-md-3 mb-4">
+          <h4 class="fw-bold">
+            <img src="https://logospng.org/download/glovo/logo-glovo-2048.png" alt="Glovo Logo" width="100" class="mb-2">
+          </h4>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color:#FFC244;">Colabora con Glovo</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Trabaja con nosotros</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Glovo para Partners</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color:#FFC244;">Enlaces de interés</h5>
+          <ul class="list-unstyled">
+            <li><a th:href="@{/ofrecemos}" class="text-white text-decoration-none">Acerca de nosotros</a></li>
+            <li><a th:href="@{/soporte}" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color:#FFC244;">Síguenos</h5>
+          <a href="https://www.facebook.com/glovoperu/" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
+          <a href="https://www.instagram.com/glovo_es/" class="text-white me-3"><i class="bi bi-instagram fs-4"></i></a>
+          <a href="https://x.com/glovo" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+          <div class="mt-3">
+            <a href="https://apps.apple.com/us/app/glovo-food-delivery-takeaway/id951812684?mt=8"><img
+              src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" width="140"></a>
+          </div>
+          <div class="mt-2">
+            <a href="https://play.google.com/store/apps/details?id=com.glovo"><img
+              src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" width="140"></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4 border-top border-secondary pt-3">
+        <p class="mb-0">&copy; 2025 Glovo Perú - Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal login simple (aparece solo si no está autenticado) -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true" sec:authorize="!isAuthenticated()">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title">Necesitas iniciar sesión</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p>Para continuar, por favor inicia sesión o crea una cuenta.</p>
+          <a th:href="@{/login}" class="btn btn-success me-2">Iniciar sesión</a>
+          <a th:href="@{/register}" class="btn btn-outline-dark">Registrarse</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

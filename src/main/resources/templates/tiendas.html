@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiendas - Glovo Perú</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* Ajustes generales de las tarjetas */
+    .card {
+      border: none;
+      border-radius: 15px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card img {
+      height: 230px;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+    /* Espaciado general */
+    section {
+      margin-top: 150px;
+      margin-bottom: 60px;
+    }
+
+    .row.g-4 {
+      row-gap: 40px !important;
+    }
+
+    /* Botones */
+    .btn-success {
+      background-color: #00A082;
+      border: none;
+    }
+
+    .btn-success:hover {
+      background-color: #007a63;
+    }
+
+    /* Título */
+    h2 {
+      margin-bottom: 40px;
+    }
+
+    /* Productos (modal) */
+    .product-card {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 100%;
+      background: #fff;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .badge-store {
+      background-color: #FFC244;
+      color: #0b3b2e;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR (Thymeleaf fragment si lo tienes) -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <!-- SECCIÓN TIENDAS -->
+  <section id="inicio" class="bg-light text-dark text-center p-5" style="margin-top: 0;">
+    <div class="container">
+      <h2 class="mb-4 text-success fw-bold text-center">Tiendas disponibles</h2>
+      <div class="row g-4 justify-content-center">
+
+        <!-- Tienda 1 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://s.newtalk.tw/album/news/558/60655f0fb1d29.jpg" class="card-img-top" alt="Tienda HyM">
+            <div class="card-body">
+              <h5 class="card-title">Fashion Style</h5>
+              <p class="card-text">Ropa urbana y accesorios para todas las edades.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="Fashion Style" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda 2 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img
+              src="https://tse1.mm.bing.net/th/id/OIP.wLuoZNgOaxepGRQZMlaVhAHaE8?w=585&h=390&rs=1&pid=ImgDetMain&o=7&rm=3"
+              class="card-img-top" alt="Zapatería El Kraken">
+            <div class="card-body">
+              <h5 class="card-title">Zapatería El Kraken</h5>
+              <p class="card-text">Zapatos cómodos y de calidad para toda ocasión.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="Zapatería El Kraken" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda 3 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://infomercado.pe/wp-content/uploads/2021/05/Coolbox.jpg" class="card-img-top" alt="Coolbox">
+            <div class="card-body">
+              <h5 class="card-title">Coolbox</h5>
+              <p class="card-text">Celulares, laptops y accesorios de última generación.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="Coolbox" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda 4 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/1200x/20/fd/57/20fd57241dcfe87232d128b1b5774ba0.jpg" class="card-img-top"
+              alt="Mundo de Papel">
+            <div class="card-body">
+              <h5 class="card-title">Mundo de Papel</h5>
+              <p class="card-text">Libros, cuadernos y artículos de oficina.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="Mundo de Papel" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda 5 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/1200x/a5/37/8c/a5378c49453118044ffc31b05e159bed.jpg" class="card-img-top"
+              alt="Joyería Brillos">
+            <div class="card-body">
+              <h5 class="card-title">Joyería Brillos</h5>
+              <p class="card-text">Anillos, cadenas y accesorios de oro y plata.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="Joyería Brillos" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda 6 -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/1200x/3e/62/b6/3e62b67a85fafe7acf35d152558b64d2.jpg" class="card-img-top"
+              alt="SportLife">
+            <div class="card-body">
+              <h5 class="card-title">SportLife</h5>
+              <p class="card-text">Ropa deportiva, zapatillas y accesorios fitness.</p>
+              <button class="btn btn-success btn-ver-productos" data-store="SportLife" type="button">
+                Ver productos
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: Productos por tienda -->
+  <div class="modal fade" id="productosModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title">
+              Productos de <span id="storeName" class="text-success fw-bold"></span>
+            </h5>
+            <small class="text-muted">Surtido de productos de esta tienda. Haz clic en "Actualizar" para ver otros.</small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="productosGrid" class="row g-3">
+            <!-- Aquí se inyectan los productos -->
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <small class="text-muted">Mostrando una selección aleatoria de esta tienda.</small>
+          <div class="d-flex gap-2">
+            <button id="btnActualizar" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-repeat me-1"></i>Actualizar
+            </button>
+            <button class="btn btn-success" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white pt-5 pb-3">
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <!-- Logo -->
+        <div class="col-md-3 mb-4">
+          <h4 class="fw-bold">
+            <img src="https://logospng.org/download/glovo/logo-glovo-2048.png" alt="Glovo Logo" width="100"
+              class="mb-2">
+          </h4>
+        </div>
+
+        <!-- COLABORA CON GLOVO -->
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Colabora con Glovo</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Trabaja con nosotros</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Glovo para Partners</a></li>
+          </ul>
+        </div>
+
+        <!-- ENLACES -->
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Enlaces de interés</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Acerca de nosotros</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+          </ul>
+        </div>
+
+        <!-- REDES SOCIALES -->
+        <div class="col-md-3 mb-4">
+          <h5 class="fw-bold" style="color: #FFC244;">Síguenos</h5>
+          <a href="https://www.facebook.com/glovoperu/" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
+          <a href="https://www.instagram.com/glovo_es/" class="text-white me-3"><i class="bi bi-instagram fs-4"></i></a>
+          <a href="https://x.com/glovo" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+          <div class="mt-3">
+            <a href="https://apps.apple.com/us/app/glovo-food-delivery-takeaway/id951812684?mt=8"><img
+                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store"
+                width="140"></a>
+          </div>
+          <div class="mt-2">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.glovo&referrer=adjust_reftag%3DcDHXITPTWKZtV%26utm_source%3DHomepage%2B-%2BAndroid%26utm_campaign%3Dfooter_es_es&pli=1"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                alt="Google Play" width="140"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COPYRIGHT -->
+      <div class="text-center mt-4 border-top border-secondary pt-3">
+        <p class="mb-0">&copy; 2025 Glovo Perú - Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- LÓGICA: Productos por tienda -->
+  <script>
+    const PEN = new Intl.NumberFormat('es-PE', {
+      style: 'currency',
+      currency: 'PEN'
+    });
+
+    // Catálogo de productos por tienda
+    const PRODUCTOS = {
+      'Fashion Style': [
+        {
+          id: 'TIE-001',
+          nombre: 'Polera oversize unisex',
+          precio: 89.90,
+          img: 'https://i.pinimg.com/1200x/b5/ae/38/b5ae388d1adb936db136b95691b905d2.jpg',
+          desc: 'Algodón peruano, fit relajado, ideal para uso diario.'
+        },
+        {
+          id: 'TIE-002',
+          nombre: 'Jean baggy negro',
+          precio: 119.90,
+          img: 'https://i.pinimg.com/1200x/3d/ad/63/3dad63847e19e93c3e9d13a763d0db3c.jpg',
+          desc: 'Tela stretch, tiro medio, cómodo y resistente.'
+        },
+        {
+          id: 'TIE-003',
+          nombre: 'Casaca denim clásica',
+          precio: 159.90,
+          img: 'https://i.pinimg.com/1200x/92/04/c5/9204c5e8992053391d836c7aeae4bd70.jpg',
+          desc: 'Casaca jean para combinar con cualquier outfit.'
+        }
+      ],
+      'Zapatería El Kraken': [
+        {
+          id: 'TIE-004',
+          nombre: 'Zapatillas urbanas',
+          precio: 189.90,
+          img: 'https://i.pinimg.com/1200x/ab/b6/21/abb6215854e2614c82a8a316b7b871be.jpg',
+          desc: 'Suela antideslizante y plantilla acolchada.'
+        },
+        {
+          id: 'TIE-005',
+          nombre: 'Zapatos de vestir',
+          precio: 209.90,
+          img: 'https://i.pinimg.com/1200x/64/e8/ac/64e8ac0a628fff6549a8ef8249a676af.jpg',
+          desc: 'Cuero sintético, perfectos para eventos formales.'
+        },
+        {
+          id: 'TIE-006',
+          nombre: 'Sandalias casuales',
+          precio: 79.90,
+          img: 'https://i.pinimg.com/1200x/49/73/1b/49731bd87a5456f28970e0b62b27d149.jpg',
+          desc: 'Ideales para el verano, cómodas y ligeras.'
+        }
+      ],
+      'Coolbox': [
+        {
+          id: 'TIE-007',
+          nombre: 'Smartphone gama media',
+          precio: 899.00,
+          img: 'https://i.pinimg.com/736x/0d/76/9a/0d769a1f4450001415b60c814bb754a0.jpg',
+          desc: '128GB de almacenamiento y cámara dual.'
+        },
+        {
+          id: 'TIE-008',
+          nombre: 'Audífonos inalámbricos',
+          precio: 149.00,
+          img: 'https://i.pinimg.com/736x/12/2d/9c/122d9cdd1ff678510621b9a0c10c82ff.jpg',
+          desc: 'Con cancelación de ruido y estuche de carga.'
+        },
+        {
+          id: 'TIE-009',
+          nombre: 'Laptop para estudiantes',
+          precio: 1999.00,
+          img: 'https://i.pinimg.com/736x/69/96/8a/69968a4397724231650c21084e06096f.jpg',
+          desc: 'Pantalla 14", 8GB RAM, SSD de 256GB.'
+        }
+      ],
+      'Mundo de Papel': [
+        {
+          id: 'TIE-010',
+          nombre: 'Cuaderno universitario',
+          precio: 12.90,
+          img: 'https://i.pinimg.com/1200x/5a/7e/e5/5a7ee5ab6904d63bfa95edc134f55eec.jpg',
+          desc: '100 hojas cuadriculadas, tapa dura.'
+        },
+        {
+          id: 'TIE-011',
+          nombre: 'Pack de lapiceros',
+          precio: 9.90,
+          img: 'https://i.pinimg.com/736x/24/a9/01/24a9017bfa25319de61bfe681b7d90a4.jpg',
+          desc: 'Tintas azul, negro y rojo, escritura suave.'
+        },
+        {
+          id: 'TIE-012',
+          nombre: 'Agenda 2026',
+          precio: 29.90,
+          img: 'https://i.pinimg.com/736x/17/c7/c2/17c7c2c55576d323ec83811744b4407b.jpg',
+          desc: 'Agenda semanal con separadores y stickers.'
+        }
+      ],
+      'Joyería Brillos': [
+        {
+          id: 'TIE-013',
+          nombre: 'Cadena de plata 925',
+          precio: 149.90,
+          img: 'https://i.pinimg.com/736x/a1/c3/e2/a1c3e2a09c0f067dad744f9cacd72bd2.jpg',
+          desc: 'Cadena fina, ideal para uso diario.'
+        },
+        {
+          id: 'TIE-014',
+          nombre: 'Anillo de compromiso',
+          precio: 399.90,
+          img: 'https://i.pinimg.com/736x/ed/ea/b5/edeab551f52670268d6398d1db8ca71a.jpg',
+          desc: 'Baño en plata con zirconia brillante.'
+        },
+        {
+          id: 'TIE-015',
+          nombre: 'Pulsera minimalista',
+          precio: 89.90,
+          img: 'https://i.pinimg.com/1200x/f4/2d/f5/f42df51349509390c96101aece07c7f7.jpg',
+          desc: 'Diseño delicado y elegante.'
+        }
+      ],
+      'SportLife': [
+        {
+          id: 'TIE-016',
+          nombre: 'Polo deportivo dry-fit',
+          precio: 69.90,
+          img: 'https://i.pinimg.com/736x/40/18/ae/4018aea74d95c67b8dac05ff0a9bd4a1.jpg',
+          desc: 'Tela respirable para entrenamientos intensos.'
+        },
+        {
+          id: 'TIE-017',
+          nombre: 'Short de running',
+          precio: 59.90,
+          img: 'https://i.pinimg.com/1200x/bd/fc/c4/bdfcc4d98a9ea880b6ffdcfa8890ab69.jpg',
+          desc: 'Ligero, con bolsillo oculto para llaves.'
+        },
+        {
+          id: 'TIE-018',
+          nombre: 'Tomatodo deportivo',
+          precio: 39.90,
+          img: 'https://i.pinimg.com/1200x/f6/74/99/f67499c04e4ac0c53eab4111e7293089.jpg',
+          desc: '700ml, libre de BPA, ideal para gimnasio.'
+        }
+      ]
+    };
+
+    const productosModalEl = document.getElementById('productosModal');
+    const productosModal = new bootstrap.Modal(productosModalEl);
+    const productosGrid = document.getElementById('productosGrid');
+    const btnActualizar = document.getElementById('btnActualizar');
+    const storeNameEl = document.getElementById('storeName');
+
+    let tiendaActual = '';
+
+    // Mezcla un arreglo
+    const shuffle = (arr) =>
+      arr
+        .map(v => ({ v, r: Math.random() }))
+        .sort((a, b) => a.r - b.r)
+        .map(({ v }) => v);
+
+    // Renderiza productos SOLO de la tienda indicada
+    function renderProductos(store) {
+      const lista = PRODUCTOS[store] || [];
+      const mostrar = shuffle(lista).slice(0, 8);
+
+      productosGrid.innerHTML = '';
+      mostrar.forEach(p => {
+        const col = document.createElement('div');
+        col.className = 'col-12 col-sm-6 col-lg-3';
+        col.innerHTML = `
+          <div class="product-card d-flex flex-column">
+            <img class="product-img" src="${p.img}" alt="${p.nombre}">
+            <div class="p-3 d-flex flex-column flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h6 class="mb-0">${p.nombre}</h6>
+                <span class="badge badge-store">${store}</span>
+              </div>
+              <p class="text-success fw-bold mb-2">${PEN.format(p.precio)}</p>
+              <p class="text-muted small mb-3">${p.desc || ''}</p>
+              <div class="mt-auto d-grid">
+                <button class="btn btn-success add-to-cart"
+                        data-id="${p.id}"
+                        data-nombre="${p.nombre}"
+                        data-precio="${p.precio}"
+                        data-servicio="tiendas"
+                        data-img="${p.img}"
+                        data-cantidad="1">
+                  <i class="bi bi-bag-plus me-1"></i> Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        productosGrid.appendChild(col);
+      });
+    }
+
+    // Abrir modal desde la tienda clickeada
+    document.querySelectorAll('.btn-ver-productos').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tiendaActual = btn.dataset.store;
+        storeNameEl.textContent = tiendaActual;
+        renderProductos(tiendaActual);
+        productosModal.show();
+      });
+    });
+
+    // Botón actualizar: vuelve a mezclar los productos de la misma tienda
+    btnActualizar.addEventListener('click', () => {
+      if (tiendaActual) {
+        renderProductos(tiendaActual);
+      }
+    });
+  </script>
+
+</body>
+
+</html>

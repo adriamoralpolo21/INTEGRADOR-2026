@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - Glovo Perú</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .navbar {
+            background-color: #FFC244;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            opacity: .2;
+            position: absolute;
+            right: 15px;
+            bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/admin}">
+            Glovo Perú · Admin
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav"
+                aria-controls="adminNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="adminNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/admin}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/pedidos}">Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/productos}">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/soporte}">Soporte</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/usuarios}">Usuarios</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <a th:href="@{/}" class="btn btn-sm btn-outline-success me-2">Ver sitio público</a>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger" type="submit">Cerrar sesión</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+    <h2 class="mb-4">Dashboard</h2>
+
+    <!-- ===== FILA 1: métricas de usuarios ===== -->
+    <div class="row g-3 mb-4">
+        <!-- Usuarios totales -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Usuarios totales</h6>
+                    <h3 th:text="${totalUsuarios}">0</h3>
+                    <span class="card-icon">👥</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admins -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Administradores</h6>
+                    <h3 th:text="${totalAdmins}">0</h3>
+                    <span class="card-icon">🛡️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Usuarios regulares</h6>
+                    <h3 th:text="${totalUsers}">0</h3>
+                    <span class="card-icon">🙋</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usuarios activos -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Cuentas activas</h6>
+                    <h3 th:text="${usuariosActivos}">0</h3>
+                    <span class="card-icon">✅</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FILA 2: métricas de ventas / pedidos ===== -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Ventas (según filtro)</h6>
+                    <!-- 👇 ID para JS -->
+                    <h4 id="ventasHoyVal"
+                        th:text="${'S/ ' + #numbers.formatDecimal(ventasHoy != null ? ventasHoy : 0,1,2)}">
+                        S/ 0.00
+                    </h4>
+                    <span class="card-icon">💰</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Pedidos (según filtro)</h6>
+                    <!-- 👇 ID para JS -->
+                    <h4 id="pedidosHoyVal" th:text="${pedidosHoy}">0</h4>
+                    <span class="card-icon">🧾</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Ventas mes actual</h6>
+                    <!-- 👇 ID por si luego quieres actualizarlo también -->
+                    <h4 id="ventasMesVal"
+                        th:text="${'S/ ' + #numbers.formatDecimal(ventasMes != null ? ventasMes : 0,1,2)}">
+                        S/ 0.00
+                    </h4>
+                    <span class="card-icon">📅</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Método de pago más usado -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Método de pago más usado</h6>
+                    <h5 th:text="${metodoMasUsado}">Sin datos</h5>
+                    <span class="card-icon">💳</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FILA 3: soporte + gestión usuarios/productos ===== -->
+    <div class="row g-3">
+        <!-- Tickets activos -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Tickets activos</h6>
+                    <h3 th:text="${ticketsActivos}">0</h3>
+                    <a th:href="@{/admin/soporte}" class="btn btn-sm btn-outline-success mt-2">
+                        Ver detalle
+                    </a>
+                    <span class="card-icon">📩</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets archivados -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Tickets archivados</h6>
+                    <h3 th:text="${ticketsArchivados}">0</h3>
+                    <a th:href="@{/admin/soporte}" class="btn btn-sm btn-outline-secondary mt-2">
+                        Gestionar
+                    </a>
+                    <span class="card-icon">📚</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestión usuarios -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Gestión de usuarios</h6>
+                    <p class="mb-2">Administra roles y estados de todas las cuentas.</p>
+                    <a th:href="@{/admin/usuarios}" class="btn btn-sm btn-success">
+                        Ir a usuarios
+                    </a>
+                    <span class="card-icon">⚙️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestión productos -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm position-relative">
+                <div class="card-body">
+                    <h6 class="text-muted">Gestión de productos</h6>
+                    <p class="mb-2">Crear, editar y eliminar productos del catálogo.</p>
+                    <a th:href="@{/admin/productos}" class="btn btn-sm btn-primary">
+                        Ir a productos
+                    </a>
+                    <span class="card-icon">🛒</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FILA 4: gráfico + top productos ===== -->
+    <div class="row g-3 mt-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">Pedidos por estado</h6>
+                    <canvas id="chartEstadosPedidos"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top productos -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Top productos más vendidos</h5>
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Cantidad vendida</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tp, i : ${topProductos}">
+                            <td th:text="${i.index + 1}">1</td>
+                            <td th:text="${tp.nombre()}">Producto</td>
+                            <td th:text="${tp.cantidad()}">0</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(topProductos)}">
+                            <td colspan="3" class="text-muted text-center">
+                                Aún no hay ventas registradas.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtro de rango de fechas -->
+    <div class="d-flex justify-content-end mb-2 mt-3">
+        <div class="input-group input-group-sm" style="max-width:260px;">
+            <span class="input-group-text">Rango</span>
+            <select id="filtroRango" class="form-select">
+                <option value="hoy" selected>Hoy</option>
+                <option value="7d">Últimos 7 días</option>
+                <option value="mes">Este mes</option>
+            </select>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    const labelsEstados = /*[[${labelsEstados}]]*/ [];
+    const valoresEstados = /*[[${valoresEstados}]]*/ [];
+
+    const ctx = document.getElementById('chartEstadosPedidos');
+    if (ctx && labelsEstados.length > 0) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labelsEstados,
+                datasets: [{
+                    data: valoresEstados
+                }]
+            }
+        });
+    }
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const selectRango     = document.getElementById('filtroRango');
+  const ventasHoySpan   = document.getElementById('ventasHoyVal');
+  const pedidosHoySpan  = document.getElementById('pedidosHoyVal');
+
+  function money(n) {
+    return new Intl.NumberFormat('es-PE', {
+      style: 'currency',
+      currency: 'PEN'
+    }).format(Number(n || 0));
+  }
+
+  async function cargarRango() {
+    if (!selectRango) return;
+    const rango = selectRango.value;
+    try {
+      const res = await fetch(`/admin/api/estadisticas/ventas?rango=${rango}`);
+      if (!res.ok) return;
+      const data = await res.json();
+
+      if (ventasHoySpan)  ventasHoySpan.textContent  = money(data.ventas);
+      if (pedidosHoySpan) pedidosHoySpan.textContent = data.pedidos;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  if (selectRango) {
+    selectRango.addEventListener('change', cargarRango);
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+package com.glovo.app.repository;
+
+import com.glovo.app.entity.Rol;
+import com.glovo.app.entity.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
+    boolean existsByEmail(String email);
+    boolean existsByTelefono(String telefono);
+
+    Optional<Usuario> findByEmail(String email);
+
+    // 🔹 Para estadísticas del dashboard
+    long countByRol(Rol rol);
+    long countByEnabledTrue();
+    long countByEnabledFalse();
+
+    // 🔹 Para listado admin
+    List<Usuario> findAllByOrderByIdAsc();
+}

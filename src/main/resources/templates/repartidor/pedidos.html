@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos para reparto</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* 🔹 Efecto glow para EN CAMINO */
+    @keyframes glow-state {
+      0% {
+        box-shadow: 0 0 0 rgba(13, 110, 253, 0.0);
+      }
+
+      50% {
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.7);
+      }
+
+      100% {
+        box-shadow: 0 0 0 rgba(13, 110, 253, 0.0);
+      }
+    }
+
+    .badge-en-camino {
+      animation: glow-state 1.5s infinite;
+    }
+
+    .card-en-camino {
+      border-width: 2px;
+      animation: glow-state 1.5s infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <div class="container py-4">
+
+    <h2 class="mb-3">Pedidos para reparto</h2>
+
+    <div th:if="${ok}" class="alert alert-success" th:text="${ok}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- ========= SECCIÓN EN ESPERA ========= -->
+    <div th:if="${enEspera != null and !#lists.isEmpty(enEspera)}" class="mb-4">
+      <h4 class="mb-2">
+        En espera
+        <span class="badge bg-secondary" th:text="${#lists.size(enEspera)}">0</span>
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" th:each="pedido : ${enEspera}">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                  Pedido #<span th:text="${pedido.id}"></span>
+                </h5>
+                <span class="badge bg-secondary">EN ESPERA</span>
+              </div>
+
+              <p class="mb-1">
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellido}">Cliente</span>
+                (<span th:text="${pedido.usuario.id}">0</span>)
+              </p>
+              <p class="mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${pedido.direccionEntrega}"></span>
+              </p>
+              <p class="mb-1">
+                <strong>Total:</strong> S/
+                <span th:text="${pedido.total}"></span>
+              </p>
+
+              <a class="btn btn-sm btn-outline-dark mt-2" th:href="@{'/repartidor/pedidos/' + ${pedido.id}}">
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= SECCIÓN PENDIENTES ========= -->
+    <div th:if="${pendientes != null and !#lists.isEmpty(pendientes)}" class="mb-4">
+      <h4 class="mb-2">
+        Pendientes
+        <span class="badge bg-warning text-dark" th:text="${#lists.size(pendientes)}">0</span>
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" th:each="pedido : ${pendientes}">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                  Pedido #<span th:text="${pedido.id}"></span>
+                </h5>
+                <span class="badge bg-warning text-dark">PENDIENTE</span>
+              </div>
+
+              <p class="mb-1">
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellido}">Cliente</span>
+                (<span th:text="${pedido.usuario.id}">0</span>)
+              </p>
+              <p class="mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${pedido.direccionEntrega}"></span>
+              </p>
+              <p class="mb-1">
+                <strong>Total:</strong> S/
+                <span th:text="${pedido.total}"></span>
+              </p>
+
+              <h6 class="mt-2 mb-1">Productos</h6>
+              <ul class="small mb-2">
+                <li th:each="det : ${pedido.detalles}">
+                  <span th:text="${det.cantidad}">1</span> x
+                  <span th:text="${det.nombreProducto}">Producto</span>
+                  — S/ <span th:text="${det.subtotal}">0.00</span>
+                </li>
+              </ul>
+
+              <div class="d-flex gap-2">
+                <form th:action="@{'/repartidor/pedidos/' + ${pedido.id} + '/en-camino'}" method="post">
+                  <button class="btn btn-outline-primary btn-sm">
+                    En camino
+                  </button>
+                </form>
+
+                <form th:action="@{'/repartidor/pedidos/' + ${pedido.id} + '/entregado'}" method="post">
+                  <button class="btn btn-success btn-sm">
+                    Entregado
+                  </button>
+                </form>
+
+                <a class="btn btn-sm btn-outline-dark ms-auto" th:href="@{'/repartidor/pedidos/' + ${pedido.id}}">
+                  Detalle
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= SECCIÓN EN CAMINO ========= -->
+    <div th:if="${enCamino != null and !#lists.isEmpty(enCamino)}" class="mb-4">
+      <h4 class="mb-2">
+        En camino
+        <span class="badge bg-info text-dark" th:text="${#lists.size(enCamino)}">0</span>
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" th:each="pedido : ${enCamino}">
+          <div class="card shadow-sm border-info card-en-camino">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                  Pedido #<span th:text="${pedido.id}"></span>
+                </h5>
+                <span class="badge bg-info text-dark badge-en-camino">EN CAMINO</span>
+              </div>
+
+              <p class="mb-1">
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellido}">Cliente</span>
+                (<span th:text="${pedido.usuario.id}">0</span>)
+              </p>
+              <p class="mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${pedido.direccionEntrega}"></span>
+              </p>
+              <p class="mb-1">
+                <strong>Total:</strong> S/
+                <span th:text="${pedido.total}"></span>
+              </p>
+
+              <div class="d-flex gap-2 mt-2">
+                <!-- Ya está en camino, no mostramos botón "En camino" -->
+
+                <form th:action="@{'/repartidor/pedidos/' + ${pedido.id} + '/entregado'}" method="post">
+                  <button class="btn btn-success btn-sm">
+                    Entregado
+                  </button>
+                </form>
+
+                <a class="btn btn-sm btn-outline-dark ms-auto" th:href="@{'/repartidor/pedidos/' + ${pedido.id}}">
+                  Detalle
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= SECCIÓN ENTREGADOS ========= -->
+    <div th:if="${entregados != null and !#lists.isEmpty(entregados)}" class="mb-4">
+      <h4 class="mb-2">
+        Entregados
+        <span class="badge bg-success" th:text="${#lists.size(entregados)}">0</span>
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" th:each="pedido : ${entregados}">
+          <div class="card shadow-sm border-success">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                  Pedido #<span th:text="${pedido.id}"></span>
+                </h5>
+                <span class="badge bg-success">ENTREGADO</span>
+              </div>
+
+              <p class="mb-1">
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellido}">Cliente</span>
+              </p>
+              <p class="mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${pedido.direccionEntrega}"></span>
+              </p>
+              <p class="mb-1">
+                <strong>Total:</strong> S/
+                <span th:text="${pedido.total}"></span>
+              </p>
+
+              <a class="btn btn-sm btn-outline-dark mt-2" th:href="@{'/repartidor/pedidos/' + ${pedido.id}}">
+                Detalle
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= SECCIÓN CANCELADOS ========= -->
+    <div th:if="${cancelados != null and !#lists.isEmpty(cancelados)}" class="mb-4">
+      <h4 class="mb-2">
+        Cancelados
+        <span class="badge bg-danger" th:text="${#lists.size(cancelados)}">0</span>
+      </h4>
+
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" th:each="pedido : ${cancelados}">
+          <div class="card shadow-sm border-danger">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                  Pedido #<span th:text="${pedido.id}"></span>
+                </h5>
+                <span class="badge bg-danger">CANCELADO</span>
+              </div>
+
+              <p class="mb-1">
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellido}">Cliente</span>
+              </p>
+              <p class="mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${pedido.direccionEntrega}"></span>
+              </p>
+              <p class="mb-1">
+                <strong>Total:</strong> S/
+                <span th:text="${pedido.total}"></span>
+              </p>
+
+              <a class="btn btn-sm btn-outline-dark mt-2" th:href="@{'/repartidor/pedidos/' + ${pedido.id}}">
+                Detalle
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Si no hay nada en ninguna lista -->
+    <div th:if="${(pendientes == null || #lists.isEmpty(pendientes)) and
+             (enCamino   == null || #lists.isEmpty(enCamino))   and
+             (enEspera   == null || #lists.isEmpty(enEspera))   and
+             (entregados == null || #lists.isEmpty(entregados)) and
+             (cancelados == null || #lists.isEmpty(cancelados))}"
+     class="alert alert-info">
+  No hay pedidos para reparto.
+</div>
+
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
